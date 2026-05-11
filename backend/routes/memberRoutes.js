@@ -19,6 +19,7 @@ router.get("/", (req, res) => {
       m.training_group_id,
       m.user_id,
       m.status,
+      m.age_category,
       tg.name AS training_group_name
       FROM members m
       LEFT JOIN training_groups tg ON m.training_group_id = tg.id`;
@@ -54,6 +55,7 @@ router.get("/group/:trainingGroupId", (req, res) => {
       m.training_group_id,
       m.user_id,
       m.status,
+      m,age_category,
       tg.name AS training_group_name
     FROM members m
     LEFT JOIN training_groups tg ON m.training_group_id = tg.id
@@ -93,6 +95,7 @@ router.get("/:id", (req, res) => {
       m.training_group_id,
       m.user_id,
       m.status,
+      m.age_category,
       tg.name AS training_group_name
     FROM members m
     LEFT JOIN training_groups tg ON m.training_group_id = tg.id
@@ -133,6 +136,7 @@ router.post("/", (req, res) => {
     training_group_id,
     user_id,
     status,
+    age_category,
   } = req.body;
 
   if (!first_name || !last_name) {
@@ -157,9 +161,10 @@ router.post("/", (req, res) => {
       photo,
       training_group_id,
       user_id,
-      status
+      status,
+      age_category
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
@@ -179,6 +184,7 @@ router.post("/", (req, res) => {
       training_group_id,
       user_id,
       status || "aktivan",
+      age_category,
     ],
     (err, result) => {
       if (err) {
@@ -214,6 +220,7 @@ router.put("/:id", (req, res) => {
     training_group_id,
     user_id,
     status,
+    age_category,
   } = req.body;
 
   if (!first_name || !last_name) {
@@ -238,7 +245,8 @@ router.put("/:id", (req, res) => {
       photo = ?,
       training_group_id = ?,
       user_id = ?,
-      status = ?
+      status = ?,
+      age_category = ?
     WHERE id = ?
   `;
 
@@ -259,6 +267,7 @@ router.put("/:id", (req, res) => {
       training_group_id,
       user_id,
       status,
+      age_category,
       id,
     ],
     (err, result) => {

@@ -7,6 +7,10 @@ const trainingGroupRoutes = require("./routes/trainingGroupRoutes");
 const memberRoutes = require("./routes/memberRoutes");
 const trainingRoutes = require("./routes/trainingRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
+const competitionRoutes = require("./routes/competitionRoutes");
+const competitionResultRoutes = require("./routes/competitionResultRoutes");
+const competitionAllowedCategoryRoutes = require("./routes/competitionAllowedCategoryRoutes");
+const competitionApplicationRoutes = require("./routes/competitionApplicationRoutes");
 
 const app = express();
 
@@ -17,6 +21,13 @@ app.use("/api/training-groups", trainingGroupRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/trainings", trainingRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/competitions", competitionRoutes);
+app.use("/api/competition-results", competitionResultRoutes);
+app.use(
+  "/api/competition-allowed-categories",
+  competitionAllowedCategoryRoutes,
+);
+app.use("/api/competition-applications", competitionApplicationRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend za Judo Club Manager radi.");
