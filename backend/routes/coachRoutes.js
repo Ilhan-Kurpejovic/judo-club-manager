@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+const verifyToken = require("../middleware/authMiddleware");
+const checkRole = require("../middleware/roleMiddleware");
+
 router.get("/", (req, res) => {
   const sql = "SELECT * FROM coaches";
 
@@ -33,7 +36,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/", verifyToken, checkRole("admin"), (req, res) => {
   const { first_name, last_name, phone, email, specialization } = req.body;
 
   if (!first_name || !last_name) {
