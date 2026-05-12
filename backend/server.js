@@ -12,11 +12,15 @@ const competitionResultRoutes = require("./routes/competitionResultRoutes");
 const competitionAllowedCategoryRoutes = require("./routes/competitionAllowedCategoryRoutes");
 const competitionApplicationRoutes = require("./routes/competitionApplicationRoutes");
 const membershipRoutes = require("./routes/membershipRoutes");
+const fileRoutes = require("./routes/fileRoutes");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/uploads", express.static("uploads"));
+
 app.use("/api/coaches", coachRoutes);
 app.use("/api/training-groups", trainingGroupRoutes);
 app.use("/api/members", memberRoutes);
@@ -30,6 +34,7 @@ app.use(
 );
 app.use("/api/competition-applications", competitionApplicationRoutes);
 app.use("/api/memberships", membershipRoutes);
+app.use("/api/files", fileRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend za Judo Club Manager radi.");
