@@ -55,7 +55,7 @@ router.get("/group/:trainingGroupId", (req, res) => {
       m.training_group_id,
       m.user_id,
       m.status,
-      m,age_category,
+      m.age_category,
       tg.name AS training_group_name
     FROM members m
     LEFT JOIN training_groups tg ON m.training_group_id = tg.id
