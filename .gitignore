@@ -6,3 +6,4 @@ build
 *.bak
 *.beforefix
 backend/uploads/
+my_notes.txt
