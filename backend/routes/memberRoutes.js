@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+const bcrypt = require("bcrypt");
 
 const verifyToken = require("../middleware/authMiddleware");
 const checkRole = require("../middleware/roleMiddleware");
@@ -123,12 +124,14 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.post("/", verifyToken, checkRole("admin"), (req, res) => {
+// POST dodavanje novog člana i automatsko kreiranje korisničkog naloga
+router.post("/", verifyToken, checkRole("admin"), async (req, res) => {
   const {
     first_name,
     last_name,
     date_of_birth,
     gender,
+    age_category,
     belt,
     weight_category,
     phone,
@@ -137,9 +140,9 @@ router.post("/", verifyToken, checkRole("admin"), (req, res) => {
     address,
     photo,
     training_group_id,
-    user_id,
     status,
-    age_category,
+    login_email,
+    initial_password,
   } = req.body;
 
   if (!first_name || !last_name) {
@@ -148,61 +151,136 @@ router.post("/", verifyToken, checkRole("admin"), (req, res) => {
     });
   }
 
-  const sql = `
-    INSERT INTO members
-    (
-      first_name,
-      last_name,
-      date_of_birth,
-      gender,
-      belt,
-      weight_category,
-      phone,
-      parent_phone,
-      email,
-      address,
-      photo,
-      training_group_id,
-      user_id,
-      status,
-      age_category
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  if (!login_email || !initial_password) {
+    return res.status(400).json({
+      message: "Email za login i početna lozinka su obavezni.",
+    });
+  }
 
-  db.query(
-    sql,
-    [
-      first_name,
-      last_name,
-      date_of_birth,
-      gender,
-      belt,
-      weight_category,
-      phone,
-      parent_phone,
-      email,
-      address,
-      photo,
-      training_group_id,
-      user_id,
-      status || "aktivan",
-      age_category,
-    ],
-    (err, result) => {
+  try {
+    const hashedPassword = await bcrypt.hash(initial_password, 10);
+    const userName = `${first_name} ${last_name}`;
+
+    db.beginTransaction((err) => {
       if (err) {
-        console.error("Greška pri dodavanju člana:", err);
+        console.error("Greška pri pokretanju transakcije:", err);
         return res.status(500).json({
           message: "Greška na serveru.",
         });
       }
 
-      res.status(201).json({
-        message: "Član je uspješno dodat.",
-        memberId: result.insertId,
-      });
-    },
-  );
+      const createUserSql = `
+        INSERT INTO users
+        (name, email, password, role_id)
+        VALUES (?, ?, ?, ?)
+      `;
+
+      // role_id = 3 je uloga 'clan'
+      db.query(
+        createUserSql,
+        [userName, login_email, hashedPassword, 3],
+        (err, userResult) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Greška pri kreiranju korisničkog naloga:", err);
+
+              if (err.code === "ER_DUP_ENTRY") {
+                return res.status(400).json({
+                  message: "Korisnik sa ovim login emailom već postoji.",
+                });
+              }
+
+              return res.status(500).json({
+                message: "Greška na serveru.",
+              });
+            });
+          }
+
+          const userId = userResult.insertId;
+
+          const createMemberSql = `
+            INSERT INTO members
+            (
+              first_name,
+              last_name,
+              date_of_birth,
+              gender,
+              age_category,
+              belt,
+              weight_category,
+              phone,
+              parent_phone,
+              email,
+              address,
+              photo,
+              training_group_id,
+              user_id,
+              status
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+
+          db.query(
+            createMemberSql,
+            [
+              first_name,
+              last_name,
+              date_of_birth,
+              gender,
+              age_category,
+              belt,
+              weight_category,
+              phone,
+              parent_phone,
+              email,
+              address,
+              photo,
+              training_group_id,
+              userId,
+              status || "aktivan",
+            ],
+            (err, memberResult) => {
+              if (err) {
+                return db.rollback(() => {
+                  console.error("Greška pri dodavanju člana:", err);
+
+                  return res.status(500).json({
+                    message:
+                      "Greška pri dodavanju člana. Korisnički nalog nije sačuvan.",
+                  });
+                });
+              }
+
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    console.error("Greška pri potvrđivanju transakcije:", err);
+
+                    return res.status(500).json({
+                      message: "Greška na serveru.",
+                    });
+                  });
+                }
+
+                res.status(201).json({
+                  message: "Član i korisnički nalog su uspješno kreirani.",
+                  memberId: memberResult.insertId,
+                  userId: userId,
+                  login_email: login_email,
+                });
+              });
+            },
+          );
+        },
+      );
+    });
+  } catch (error) {
+    console.error("Greška pri hashovanju lozinke:", error);
+
+    res.status(500).json({
+      message: "Greška na serveru.",
+    });
+  }
 });
 
 router.put("/:id", verifyToken, checkRole("admin"), (req, res) => {

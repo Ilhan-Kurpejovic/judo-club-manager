@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+const bcrypt = require("bcrypt");
 
 const verifyToken = require("../middleware/authMiddleware");
 const checkRole = require("../middleware/roleMiddleware");
@@ -36,8 +37,17 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.post("/", verifyToken, checkRole("admin"), (req, res) => {
-  const { first_name, last_name, phone, email, specialization } = req.body;
+// POST dodavanje novog trenera i automatsko kreiranje korisničkog naloga
+router.post("/", verifyToken, checkRole("admin"), async (req, res) => {
+  const {
+    first_name,
+    last_name,
+    phone,
+    email,
+    specialization,
+    login_email,
+    initial_password,
+  } = req.body;
 
   if (!first_name || !last_name) {
     return res.status(400).json({
@@ -45,34 +55,117 @@ router.post("/", verifyToken, checkRole("admin"), (req, res) => {
     });
   }
 
-  const sql = `
-    INSERT INTO coaches 
-    (first_name, last_name, phone, email, specialization)
-    VALUES (?, ?, ?, ?, ?)
-  `;
+  if (!login_email || !initial_password) {
+    return res.status(400).json({
+      message: "Email za login i početna lozinka su obavezni.",
+    });
+  }
 
-  db.query(
-    sql,
-    [first_name, last_name, phone, email, specialization],
-    (err, result) => {
+  try {
+    const hashedPassword = await bcrypt.hash(initial_password, 10);
+    const userName = `${first_name} ${last_name}`;
+
+    db.beginTransaction((err) => {
       if (err) {
-        console.error("Greška pri dodavanju trenera:", err);
+        console.error("Greška pri pokretanju transakcije:", err);
         return res.status(500).json({
           message: "Greška na serveru.",
         });
       }
 
-      res.status(201).json({
-        message: "Trener je uspješno dodat.",
-        coachId: result.insertId,
-      });
-    },
-  );
+      const createUserSql = `
+        INSERT INTO users
+        (name, email, password, role_id)
+        VALUES (?, ?, ?, ?)
+      `;
+
+      // role_id = 2 je uloga 'trener'
+      db.query(
+        createUserSql,
+        [userName, login_email, hashedPassword, 2],
+        (err, userResult) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Greška pri kreiranju korisničkog naloga:", err);
+
+              if (err.code === "ER_DUP_ENTRY") {
+                return res.status(400).json({
+                  message: "Korisnik sa ovim login emailom već postoji.",
+                });
+              }
+
+              return res.status(500).json({
+                message: "Greška na serveru.",
+              });
+            });
+          }
+
+          const userId = userResult.insertId;
+
+          const createCoachSql = `
+            INSERT INTO coaches
+            (
+              first_name,
+              last_name,
+              phone,
+              email,
+              specialization,
+              user_id
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+          `;
+
+          db.query(
+            createCoachSql,
+            [first_name, last_name, phone, email, specialization, userId],
+            (err, coachResult) => {
+              if (err) {
+                return db.rollback(() => {
+                  console.error("Greška pri dodavanju trenera:", err);
+
+                  return res.status(500).json({
+                    message:
+                      "Greška pri dodavanju trenera. Korisnički nalog nije sačuvan.",
+                  });
+                });
+              }
+
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    console.error("Greška pri potvrđivanju transakcije:", err);
+
+                    return res.status(500).json({
+                      message: "Greška na serveru.",
+                    });
+                  });
+                }
+
+                res.status(201).json({
+                  message: "Trener i korisnički nalog su uspješno kreirani.",
+                  coachId: coachResult.insertId,
+                  userId: userId,
+                  login_email: login_email,
+                });
+              });
+            },
+          );
+        },
+      );
+    });
+  } catch (error) {
+    console.error("Greška pri hashovanju lozinke:", error);
+
+    res.status(500).json({
+      message: "Greška na serveru.",
+    });
+  }
 });
 
 router.put("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
-  const { first_name, last_name, phone, email, specialization } = req.body;
+  const { first_name, last_name, phone, email, specialization, user_id } =
+    req.body;
 
   if (!first_name || !last_name) {
     return res.status(400).json({
@@ -82,13 +175,13 @@ router.put("/:id", verifyToken, checkRole("admin"), (req, res) => {
 
   const sql = `
     UPDATE coaches
-    SET first_name = ?, last_name = ?, phone = ?, email = ?, specialization = ?
+    SET first_name = ?, last_name = ?, phone = ?, email = ?, specialization = ?, user_id = ?
     WHERE id = ?
   `;
 
   db.query(
     sql,
-    [first_name, last_name, phone, email, specialization, id],
+    [first_name, last_name, phone, email, specialization, user_id, id],
     (err, result) => {
       if (err) {
         console.error("Greška pri izmjeni trenera:", err);
