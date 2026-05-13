@@ -70,7 +70,7 @@ router.post("/", verifyToken, checkRole("admin"), (req, res) => {
   );
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
   const { first_name, last_name, phone, email, specialization } = req.body;
 
@@ -110,7 +110,7 @@ router.put("/:id", (req, res) => {
   );
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
 
   const sql = "DELETE FROM coaches WHERE id = ?";

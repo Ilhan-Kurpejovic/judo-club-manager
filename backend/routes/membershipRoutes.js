@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+const verifyToken = require("../middleware/authMiddleware");
+const checkRole = require("../middleware/roleMiddleware");
+
 router.get("/", (req, res) => {
   const sql = `
     SELECT
@@ -107,7 +110,7 @@ router.get("/:id", (req, res) => {
 });
 
 // POST dodavanje clanarine
-router.post("/", (req, res) => {
+router.post("/", verifyToken, checkRole("admin"), (req, res) => {
   const { member_id, month, year, amount, status, payment_date } = req.body;
 
   if (!member_id || !month || !year || !amount) {
@@ -156,7 +159,7 @@ router.post("/", (req, res) => {
 });
 
 // PUT izmjena clanarine
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
   const { member_id, month, year, amount, status, payment_date } = req.body;
 
@@ -203,7 +206,7 @@ router.put("/:id", (req, res) => {
 });
 
 // DELETE brisanje clanarine
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
 
   const sql = "DELETE FROM memberships WHERE id = ?";

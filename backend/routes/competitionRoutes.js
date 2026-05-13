@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+const verifyToken = require("../middleware/authMiddleware");
+const checkRole = require("../middleware/roleMiddleware");
+
 router.get("/", (req, res) => {
   const sql = `
     SELECT
@@ -61,7 +64,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/", verifyToken, checkRole("admin"), (req, res) => {
   const { name, city, country, competition_date, organizer } = req.body;
 
   if (!name || !competition_date) {
@@ -95,7 +98,7 @@ router.post("/", (req, res) => {
   );
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
   const { name, city, country, competition_date, organizer } = req.body;
 
@@ -140,7 +143,7 @@ router.put("/:id", (req, res) => {
   );
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
 
   const sql = "DELETE FROM competitions WHERE id = ?";

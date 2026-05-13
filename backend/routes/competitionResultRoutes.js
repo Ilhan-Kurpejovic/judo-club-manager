@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+const verifyToken = require("../middleware/authMiddleware");
+const checkRole = require("../middleware/roleMiddleware");
+
 // GET svi rezultati sa svih takmicenja
 router.get("/", (req, res) => {
   const sql = `
@@ -147,7 +150,7 @@ router.get("/:id", (req, res) => {
 });
 
 // POST dodavanje rezultata za vise takmicara odjednom!!!
-router.post("/bulk", (req, res) => {
+router.post("/bulk", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { competition_id, results } = req.body;
 
   if (!competition_id || !Array.isArray(results) || results.length === 0) {
@@ -186,7 +189,7 @@ router.post("/bulk", (req, res) => {
 });
 
 // POST dodavanje rezultata
-router.post("/", (req, res) => {
+router.post("/", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { member_id, competition_id, category, placement, medal } = req.body;
 
   if (!member_id || !competition_id) {
@@ -221,7 +224,7 @@ router.post("/", (req, res) => {
 });
 
 // PUT izmjena rezultata
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { id } = req.params;
   const { member_id, competition_id, category, placement, medal } = req.body;
 
@@ -267,7 +270,7 @@ router.put("/:id", (req, res) => {
 });
 
 // DELETE brisanje rezultata
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { id } = req.params;
 
   const sql = "DELETE FROM competition_results WHERE id = ?";

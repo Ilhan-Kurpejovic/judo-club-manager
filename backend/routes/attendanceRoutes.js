@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+const verifyToken = require("../middleware/authMiddleware");
+const checkRole = require("../middleware/roleMiddleware");
+
 router.get("/", (req, res) => {
   const sql = `
     SELECT
@@ -108,7 +111,7 @@ router.get("/:id", (req, res) => {
 });
 
 // POST dodavanje prisustva za vise clanova odjednom!!!
-router.post("/bulk", (req, res) => {
+router.post("/bulk", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { training_id, attendance } = req.body;
 
   if (!training_id || !Array.isArray(attendance) || attendance.length === 0) {
@@ -145,7 +148,7 @@ router.post("/bulk", (req, res) => {
 });
 
 // POST dodavanje prisustva
-router.post("/", (req, res) => {
+router.post("/", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { member_id, training_id, status } = req.body;
 
   if (!member_id || !training_id) {
@@ -180,7 +183,7 @@ router.post("/", (req, res) => {
 });
 
 // PUT izmjena prisustva
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { id } = req.params;
   const { member_id, training_id, status } = req.body;
 
@@ -217,7 +220,7 @@ router.put("/:id", (req, res) => {
 });
 
 // DELETE brisanje prisustva
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { id } = req.params;
 
   const sql = "DELETE FROM attendance WHERE id = ?";

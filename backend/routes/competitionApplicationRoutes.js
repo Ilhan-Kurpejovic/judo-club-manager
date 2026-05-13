@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+const verifyToken = require("../middleware/authMiddleware");
+const checkRole = require("../middleware/roleMiddleware");
+
 // GET sve prijave
 router.get("/", (req, res) => {
   const sql = `
@@ -182,153 +185,163 @@ router.post("/", (req, res) => {
 });*/
 
 //nova verzija za prijavu
-router.post("/", (req, res) => {
-  const { competition_id, member_id, note } = req.body;
+router.post(
+  "/",
+  verifyToken,
+  checkRole("admin", "trener", "clan"),
+  (req, res) => {
+    const { competition_id, member_id, note } = req.body;
 
-  if (!competition_id || !member_id) {
-    return res.status(400).json({
-      message: "Takmičenje i član su obavezni.",
-    });
-  }
+    if (!competition_id || !member_id) {
+      return res.status(400).json({
+        message: "Takmičenje i član su obavezni.",
+      });
+    }
 
-  // Prvo provjeravamo kojoj uzrasnoj kategoriji pripada član
-  const memberSql = `
+    // Prvo provjeravamo kojoj uzrasnoj kategoriji pripada član
+    const memberSql = `
     SELECT id, age_category
     FROM members
     WHERE id = ?
   `;
 
-  db.query(memberSql, [member_id], (err, memberResults) => {
-    if (err) {
-      console.error("Greška pri provjeri člana:", err);
-      return res.status(500).json({
-        message: "Greška na serveru.",
-      });
-    }
+    db.query(memberSql, [member_id], (err, memberResults) => {
+      if (err) {
+        console.error("Greška pri provjeri člana:", err);
+        return res.status(500).json({
+          message: "Greška na serveru.",
+        });
+      }
 
-    if (memberResults.length === 0) {
-      return res.status(404).json({
-        message: "Član nije pronađen.",
-      });
-    }
+      if (memberResults.length === 0) {
+        return res.status(404).json({
+          message: "Član nije pronađen.",
+        });
+      }
 
-    const memberAgeCategory = memberResults[0].age_category;
+      const memberAgeCategory = memberResults[0].age_category;
 
-    if (!memberAgeCategory) {
-      return res.status(400).json({
-        message: "Član nema definisanu uzrasnu kategoriju.",
-      });
-    }
+      if (!memberAgeCategory) {
+        return res.status(400).json({
+          message: "Član nema definisanu uzrasnu kategoriju.",
+        });
+      }
 
-    // Zatim provjeravamo da li je ta kategorija dozvoljena za takmičenje
-    const categorySql = `
+      // Zatim provjeravamo da li je ta kategorija dozvoljena za takmičenje
+      const categorySql = `
       SELECT id
       FROM competition_allowed_categories
       WHERE competition_id = ?
         AND age_category = ?
     `;
 
-    db.query(
-      categorySql,
-      [competition_id, memberAgeCategory],
-      (err, categoryResults) => {
-        if (err) {
-          console.error("Greška pri provjeri dozvoljene kategorije:", err);
-          return res.status(500).json({
-            message: "Greška na serveru.",
-          });
-        }
+      db.query(
+        categorySql,
+        [competition_id, memberAgeCategory],
+        (err, categoryResults) => {
+          if (err) {
+            console.error("Greška pri provjeri dozvoljene kategorije:", err);
+            return res.status(500).json({
+              message: "Greška na serveru.",
+            });
+          }
 
-        if (categoryResults.length === 0) {
-          return res.status(400).json({
-            message:
-              "Član ne pripada uzrasnoj kategoriji koja je dozvoljena za ovo takmičenje.",
-          });
-        }
+          if (categoryResults.length === 0) {
+            return res.status(400).json({
+              message:
+                "Član ne pripada uzrasnoj kategoriji koja je dozvoljena za ovo takmičenje.",
+            });
+          }
 
-        // Ako kategorija odgovara, upisujemo prijavu
-        const insertSql = `
+          // Ako kategorija odgovara, upisujemo prijavu
+          const insertSql = `
           INSERT INTO competition_applications
           (competition_id, member_id, note)
           VALUES (?, ?, ?)
         `;
 
-        db.query(
-          insertSql,
-          [competition_id, member_id, note],
-          (err, result) => {
-            if (err) {
-              console.error("Greška pri prijavi za takmičenje:", err);
+          db.query(
+            insertSql,
+            [competition_id, member_id, note],
+            (err, result) => {
+              if (err) {
+                console.error("Greška pri prijavi za takmičenje:", err);
 
-              if (err.code === "ER_DUP_ENTRY") {
-                return res.status(400).json({
-                  message: "Član je već prijavljen za ovo takmičenje.",
+                if (err.code === "ER_DUP_ENTRY") {
+                  return res.status(400).json({
+                    message: "Član je već prijavljen za ovo takmičenje.",
+                  });
+                }
+
+                return res.status(500).json({
+                  message: "Greška na serveru.",
                 });
               }
 
-              return res.status(500).json({
-                message: "Greška na serveru.",
+              res.status(201).json({
+                message: "Prijava za takmičenje je uspješno poslata.",
+                applicationId: result.insertId,
               });
-            }
-
-            res.status(201).json({
-              message: "Prijava za takmičenje je uspješno poslata.",
-              applicationId: result.insertId,
-            });
-          },
-        );
-      },
-    );
-  });
-});
+            },
+          );
+        },
+      );
+    });
+  },
+);
 
 // PUT odobravanje ili odbijanje prijave
-router.put("/:id/status", (req, res) => {
-  const { id } = req.params;
-  const { status, note } = req.body;
+router.put(
+  "/:id/status",
+  verifyToken,
+  checkRole("admin", "trener"),
+  (req, res) => {
+    const { id } = req.params;
+    const { status, note } = req.body;
 
-  if (!status) {
-    return res.status(400).json({
-      message: "Status prijave je obavezan.",
-    });
-  }
+    if (!status) {
+      return res.status(400).json({
+        message: "Status prijave je obavezan.",
+      });
+    }
 
-  const allowedStatuses = ["na čekanju", "odobreno", "odbijeno"];
+    const allowedStatuses = ["na čekanju", "odobreno", "odbijeno"];
 
-  if (!allowedStatuses.includes(status)) {
-    return res.status(400).json({
-      message: "Status može biti: na čekanju, odobreno ili odbijeno.",
-    });
-  }
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Status može biti: na čekanju, odobreno ili odbijeno.",
+      });
+    }
 
-  const sql = `
+    const sql = `
     UPDATE competition_applications
     SET status = ?, note = ?
     WHERE id = ?
   `;
 
-  db.query(sql, [status, note, id], (err, result) => {
-    if (err) {
-      console.error("Greška pri izmjeni statusa prijave:", err);
-      return res.status(500).json({
-        message: "Greška na serveru.",
-      });
-    }
+    db.query(sql, [status, note, id], (err, result) => {
+      if (err) {
+        console.error("Greška pri izmjeni statusa prijave:", err);
+        return res.status(500).json({
+          message: "Greška na serveru.",
+        });
+      }
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Prijava nije pronađena.",
-      });
-    }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          message: "Prijava nije pronađena.",
+        });
+      }
 
-    res.json({
-      message: "Status prijave je uspješno izmijenjen.",
+      res.json({
+        message: "Status prijave je uspješno izmijenjen.",
+      });
     });
-  });
-});
+  },
+);
 
 // DELETE brisanje prijave
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
 
   const sql = "DELETE FROM competition_applications WHERE id = ?";
