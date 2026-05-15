@@ -1,0 +1,4 @@
+◇ injected env (7) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+Server radi na portu 5000
+Uspješno povezivanje sa MySQL bazom.
