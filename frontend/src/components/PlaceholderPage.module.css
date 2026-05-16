@@ -1,0 +1,33 @@
+.pagePanel {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  padding: 32px 28px;
+  box-shadow: 0 10px 24px rgba(30, 58, 95, 0.06);
+}
+
+.eyebrow {
+  width: 46px;
+  height: 4px;
+  border-radius: 999px;
+  background: #c62828;
+  color: transparent;
+  font-size: 0;
+  margin: 0 0 20px;
+  overflow: hidden;
+}
+
+.pagePanel h1 {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: 29px;
+  line-height: 1.2;
+}
+
+.pagePanel p:last-child {
+  margin: 0;
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.5;
+}

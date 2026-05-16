@@ -1,87 +1,176 @@
 .appShell {
   min-height: 100vh;
-  background: #eef3f9;
-  color: #0f2137;
+  background: #f3f6fa;
+  color: #1f2937;
 }
 
 .header {
-  height: 72px;
+  height: 74px;
   background: #ffffff;
-  border-bottom: 1px solid #d9e1eb;
+  border-bottom: 1px solid #d1d5db;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 28px;
+  padding: 0 20px;
 }
 
 .eyebrow {
-  margin: 0 0 2px;
-  color: #d72630;
-  font-size: 12px;
+  margin: 0 0 1px;
+  color: #111827;
+  font-size: 18px;
   font-weight: 700;
-  text-transform: uppercase;
+  letter-spacing: 0;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 18px;
-  color: #0f2137;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.header > div:first-child {
+  position: relative;
+  padding-left: 56px;
+}
+
+.header > div:first-child::before {
+  content: "J";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #1e3a5f;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  transform: translateY(-50%);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userSummary {
+  position: relative;
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  min-height: 44px;
+  padding-left: 56px;
+}
+
+.userSummary span {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.userSummary small {
+  color: #6b7280;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.userSummary::before {
+  content: "JD";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  background: #eef2f7;
+  color: #1e3a5f;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  transform: translateY(-50%);
 }
 
 .header button {
-  border: 1px solid #c8d2df;
+  border: 0;
   border-radius: 10px;
-  background: #ffffff;
-  color: #1d426b;
+  background: #1e3a5f;
+  color: #ffffff;
   cursor: pointer;
   font: inherit;
   font-size: 14px;
   font-weight: 700;
-  padding: 10px 14px;
+  padding: 12px 18px;
+  box-shadow: 0 8px 16px rgba(30, 58, 95, 0.18);
 }
 
 .header button:hover {
-  background: #f8fafc;
+  background: #142a44;
 }
 
 .body {
   display: grid;
-  grid-template-columns: 240px 1fr;
-  min-height: calc(100vh - 72px);
+  grid-template-columns: 304px 1fr;
+  min-height: calc(100vh - 74px);
 }
 
 .sidebar {
-  background: #ffffff;
-  border-right: 1px solid #d9e1eb;
-  padding: 24px 18px;
+  background: #1e3a5f;
+  border-right: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 12px 24px;
 }
 
 .sidebar nav {
   display: grid;
-  gap: 8px;
+  gap: 4px;
+}
+
+.sidebar nav::before {
+  content: "NAVIGATION";
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  margin: 0 0 10px;
+  padding: 0 0 0 0;
 }
 
 .sidebar a {
-  border-radius: 10px;
-  color: #415a77;
-  font-size: 14px;
+  border-left: 4px solid transparent;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 16px;
   font-weight: 700;
-  padding: 11px 12px;
+  padding: 14px 16px;
   text-decoration: none;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
 }
 
 .sidebar a:hover {
-  background: #f1f5f9;
-  color: #1d426b;
+  background: rgba(20, 42, 68, 0.62);
+  color: #ffffff;
 }
 
 .sidebar a.activeLink {
-  background: #e8eef5;
-  color: #1d426b;
+  background: #142a44;
+  border-left-color: #c62828;
+  color: #ffffff;
 }
 
 .content {
-  padding: 28px;
+  background: #f3f6fa;
+  padding: 34px 36px;
 }
 
 @media (max-width: 760px) {
@@ -89,7 +178,17 @@
     height: auto;
     align-items: flex-start;
     gap: 16px;
+    flex-direction: column;
     padding: 18px;
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .userSummary {
+    justify-items: start;
   }
 
   .body {
@@ -98,9 +197,18 @@
   }
 
   .sidebar {
+    display: block;
     border-right: 0;
-    border-bottom: 1px solid #d9e1eb;
-    padding: 14px 18px;
+    border-bottom: 1px solid #d1d5db;
+    padding: 14px;
+  }
+
+  .sidebar nav {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .sidebar nav::before {
+    grid-column: 1 / -1;
   }
 
   .content {
