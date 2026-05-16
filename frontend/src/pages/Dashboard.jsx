@@ -1,46 +1,68 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
 import styles from "./Dashboard.module.css";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const savedUser = localStorage.getItem("user");
-  const user = savedUser ? JSON.parse(savedUser) : null;
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  }
+  useEffect(() => {
+    async function loadCurrentUser() {
+      try {
+        const response = await axiosInstance.get("/auth/me");
+
+        setUser(response.data.user);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      } catch (error) {
+        setError(
+          error.response?.data?.message || "Could not load dashboard data.",
+        );
+
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadCurrentUser();
+  }, [navigate]);
 
   return (
-    <main className={styles.dashboardPage}>
-      <section className={styles.dashboardPanel}>
-        <header className={styles.dashboardHeader}>
-          <div>
-            <p className={styles.eyebrow}>Judo Club Manager</p>
-            <h1>Dashboard</h1>
-          </div>
+    <section className={styles.dashboardPanel}>
+      <p className={styles.eyebrow}>Judo Club Manager</p>
+      <h1>Dashboard</h1>
 
-          <button
-            className={styles.logoutButton}
-            type="button"
-            onClick={handleLogout}
-          >
-            Log out
-          </button>
-        </header>
+      {isLoading && <p className={styles.emptyState}>Loading dashboard...</p>}
 
-        {user ? (
-          <div className={styles.userCard}>
-            <p>Welcome, {user.name}</p>
-            <span>{user.role_name}</span>
-            <span>{user.email}</span>
-          </div>
-        ) : (
-          <p className={styles.emptyState}>No logged in user found.</p>
-        )}
-      </section>
-    </main>
+      {error && !isLoading && <p className={styles.errorState}>{error}</p>}
+
+      {user && !isLoading ? (
+        <div className={styles.userCard}>
+          <p>Welcome, {user.name}</p>
+          <span>{user.role_name}</span>
+          <span>{user.email}</span>
+          {user.member_id && <span>ID clana: {user.member_id}</span>}
+          {user.coach_id && <span>ID trenera: {user.coach_id}</span>}
+          {user.training_group_name && (
+            <span>Trening grupa: {user.training_group_name}</span>
+          )}
+          {user.specialization && (
+            <span>Specijalizacija: {user.specialization}</span>
+          )}
+        </div>
+      ) : null}
+
+      {!user && !error && !isLoading ? (
+        <p className={styles.emptyState}>No logged in user found.</p>
+      ) : null}
+    </section>
   );
 }
 

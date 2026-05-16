@@ -1,0 +1,109 @@
+.appShell {
+  min-height: 100vh;
+  background: #eef3f9;
+  color: #0f2137;
+}
+
+.header {
+  height: 72px;
+  background: #ffffff;
+  border-bottom: 1px solid #d9e1eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+}
+
+.eyebrow {
+  margin: 0 0 2px;
+  color: #d72630;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f2137;
+}
+
+.header button {
+  border: 1px solid #c8d2df;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1d426b;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 14px;
+}
+
+.header button:hover {
+  background: #f8fafc;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 72px);
+}
+
+.sidebar {
+  background: #ffffff;
+  border-right: 1px solid #d9e1eb;
+  padding: 24px 18px;
+}
+
+.sidebar nav {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar a {
+  border-radius: 10px;
+  color: #415a77;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 11px 12px;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  background: #f1f5f9;
+  color: #1d426b;
+}
+
+.sidebar a.activeLink {
+  background: #e8eef5;
+  color: #1d426b;
+}
+
+.content {
+  padding: 28px;
+}
+
+@media (max-width: 760px) {
+  .header {
+    height: auto;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .body {
+    display: block;
+    min-height: auto;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid #d9e1eb;
+    padding: 14px 18px;
+  }
+
+  .content {
+    padding: 18px;
+  }
+}
