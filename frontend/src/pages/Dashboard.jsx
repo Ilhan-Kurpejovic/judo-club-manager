@@ -35,28 +35,64 @@ function Dashboard() {
   }, [navigate]);
 
   return (
-    <section className={styles.dashboardPanel}>
-      <p className={styles.eyebrow}>Judo Club Manager</p>
-      <h1>Dashboard</h1>
+    <section className={styles.dashboardPage}>
+      <div className={styles.pageHeader}>
+        <span className={styles.accentLine}></span>
+        <h1>Dashboard</h1>
+        <p>Overview of your club activity, members and upcoming sessions.</p>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <article className={styles.statCard}>
+          <p>Active members</p>
+          <strong>128</strong>
+          <span>+4 this month</span>
+        </article>
+
+        <article className={styles.statCard}>
+          <p>Coaches</p>
+          <strong>7</strong>
+          <span>2 head coaches</span>
+        </article>
+
+        <article className={styles.statCard}>
+          <p>Training groups</p>
+          <strong>9</strong>
+          <span>Children, juniors, seniors</span>
+        </article>
+
+        <article className={styles.statCard}>
+          <p>Unpaid fees</p>
+          <strong>12</strong>
+          <span>Requires follow-up</span>
+        </article>
+      </div>
 
       {isLoading && <p className={styles.emptyState}>Loading dashboard...</p>}
 
       {error && !isLoading && <p className={styles.errorState}>{error}</p>}
 
       {user && !isLoading ? (
-        <div className={styles.userCard}>
-          <p>Welcome, {user.name}</p>
-          <span>{user.role_name}</span>
-          <span>{user.email}</span>
-          {user.member_id && <span>ID clana: {user.member_id}</span>}
-          {user.coach_id && <span>ID trenera: {user.coach_id}</span>}
-          {user.training_group_name && (
-            <span>Trening grupa: {user.training_group_name}</span>
-          )}
-          {user.specialization && (
-            <span>Specijalizacija: {user.specialization}</span>
-          )}
-        </div>
+        <article className={styles.welcomeCard}>
+          <h2>Welcome back</h2>
+          <p>
+            You are signed in as {user.name}. Each protected page is rendered in
+            this main content area through the router outlet.
+          </p>
+
+          <div className={styles.userMeta}>
+            <span>{user.role_name}</span>
+            <span>{user.email}</span>
+            {user.member_id && <span>ID clana: {user.member_id}</span>}
+            {user.coach_id && <span>ID trenera: {user.coach_id}</span>}
+            {user.training_group_name && (
+              <span>Trening grupa: {user.training_group_name}</span>
+            )}
+            {user.specialization && (
+              <span>Specijalizacija: {user.specialization}</span>
+            )}
+          </div>
+        </article>
       ) : null}
 
       {!user && !error && !isLoading ? (

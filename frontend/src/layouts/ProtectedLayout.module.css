@@ -5,7 +5,7 @@
 }
 
 .header {
-  height: 74px;
+  height: 82px;
   background: #ffffff;
   border-bottom: 1px solid #d1d5db;
   display: flex;
@@ -117,8 +117,8 @@
 
 .body {
   display: grid;
-  grid-template-columns: 304px 1fr;
-  min-height: calc(100vh - 74px);
+  grid-template-columns: 308px 1fr;
+  min-height: calc(100vh - 82px);
 }
 
 .sidebar {
@@ -144,6 +144,9 @@
 }
 
 .sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   border-left: 4px solid transparent;
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.82);
@@ -157,8 +160,22 @@
     color 160ms ease;
 }
 
+.sidebar a svg {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.sidebar a span {
+  min-width: 0;
+}
+
 .sidebar a:hover {
   background: rgba(20, 42, 68, 0.62);
+  color: #ffffff;
+}
+
+.sidebar a:hover svg,
+.sidebar a.activeLink svg {
   color: #ffffff;
 }
 
@@ -170,7 +187,7 @@
 
 .content {
   background: #f3f6fa;
-  padding: 34px 36px;
+  padding: 34px 35px;
 }
 
 @media (max-width: 760px) {
