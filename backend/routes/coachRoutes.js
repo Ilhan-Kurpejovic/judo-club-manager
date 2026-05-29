@@ -206,6 +206,93 @@ router.put("/:id", verifyToken, checkRole("admin"), (req, res) => {
 router.delete("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
 
+  db.beginTransaction((err) => {
+    if (err) {
+      console.error("Greska pri pokretanju transakcije:", err);
+      return res.status(500).json({
+        message: "Greska na serveru.",
+      });
+    }
+
+    db.query("SELECT user_id FROM coaches WHERE id = ?", [id], (err, rows) => {
+      if (err) {
+        return db.rollback(() => {
+          console.error("Greska pri citanju trenera za brisanje:", err);
+          return res.status(500).json({
+            message: "Greska na serveru.",
+          });
+        });
+      }
+
+      if (rows.length === 0) {
+        return db.rollback(() => {
+          return res.status(404).json({
+            message: "Trener nije pronadjen.",
+          });
+        });
+      }
+
+      const userId = rows[0].user_id;
+
+      db.query("DELETE FROM coaches WHERE id = ?", [id], (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error("Greska pri brisanju trenera:", err);
+            return res.status(500).json({
+              message: "Greska na serveru.",
+            });
+          });
+        }
+
+        if (result.affectedRows === 0) {
+          return db.rollback(() => {
+            return res.status(404).json({
+              message: "Trener nije pronadjen.",
+            });
+          });
+        }
+
+        const finishDelete = () => {
+          db.commit((err) => {
+            if (err) {
+              return db.rollback(() => {
+                console.error("Greska pri potvrdi brisanja:", err);
+                return res.status(500).json({
+                  message: "Greska na serveru.",
+                });
+              });
+            }
+
+            return res.json({
+              message: "Trener i korisnicki nalog su uspjesno obrisani.",
+            });
+          });
+        };
+
+        if (!userId) {
+          return finishDelete();
+        }
+
+        db.query("DELETE FROM users WHERE id = ?", [userId], (err) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Greska pri brisanju korisnickog naloga:", err);
+              return res.status(500).json({
+                message: "Greska na serveru.",
+              });
+            });
+          }
+
+          return finishDelete();
+        });
+      });
+    });
+  });
+});
+
+router.delete("/legacy/:id", verifyToken, checkRole("admin"), (req, res) => {
+  const { id } = req.params;
+
   const sql = "DELETE FROM coaches WHERE id = ?";
 
   db.query(sql, [id], (err, result) => {
