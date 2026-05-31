@@ -1,0 +1,860 @@
+.competitionsPage {
+  width: 100%;
+}
+
+.pageHeader {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.accentLine {
+  display: block;
+  grid-column: 1 / -1;
+  width: 46px;
+  height: 4px;
+  border-radius: 999px;
+  background: #c62828;
+}
+
+.pageHeader h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 29px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.pageHeader p {
+  margin: 12px 0 0;
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.addButton {
+  border: 0;
+  border-radius: 10px;
+  background: #1e3a5f;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 16px;
+  white-space: nowrap;
+}
+
+.addButton:hover {
+  background: #142a44;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.summaryGrid article {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 13px;
+  box-shadow: 0 8px 20px rgba(30, 58, 95, 0.05);
+  padding: 18px;
+}
+
+.summaryGrid span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.summaryGrid strong {
+  display: block;
+  margin-top: 12px;
+  color: #1e3a5f;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.competitionForm {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 13px;
+  box-shadow: 0 8px 20px rgba(30, 58, 95, 0.05);
+  margin-bottom: 18px;
+  padding: 22px;
+}
+
+.formHeader {
+  margin-bottom: 18px;
+}
+
+.formHeader h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 20px;
+}
+
+.formHeader p {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.formGrid label {
+  display: grid;
+  gap: 7px;
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.fullWidthField {
+  grid-column: 1 / -1;
+}
+
+.formGrid input {
+  height: 44px;
+  border: 1px solid #d1d5db;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+  padding: 0 14px;
+  outline: none;
+}
+
+.formGrid input:focus {
+  border-color: #1e3a5f;
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
+}
+
+.formError,
+.pageSuccess,
+.categoryError,
+.applicationError {
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.formError,
+.categoryError,
+.applicationError {
+  margin: 16px 0 0;
+  background: #fff1f2;
+  color: #c62828;
+}
+
+.categoryError,
+.applicationError {
+  margin: 0 0 18px;
+}
+
+.pageSuccess {
+  margin: 0 0 18px;
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.formActions button {
+  border: 0;
+  border-radius: 10px;
+  background: #1e3a5f;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 16px;
+}
+
+.formActions button:hover {
+  background: #142a44;
+}
+
+.formActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.cancelButton {
+  border: 1px solid #d1d5db !important;
+  background: #ffffff !important;
+  color: #1e3a5f !important;
+}
+
+.cancelButton:hover {
+  background: #f3f6fa !important;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.filterGroup {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.filterButton,
+.activeFilterButton {
+  height: 44px;
+  border: 0;
+  border-right: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #6b7280;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0 14px;
+}
+
+.filterButton:last-child,
+.activeFilterButton:last-child {
+  border-right: 0;
+}
+
+.filterButton:hover {
+  background: #f3f6fa;
+  color: #1e3a5f;
+}
+
+.activeFilterButton {
+  background: #1e3a5f;
+  color: #ffffff;
+}
+
+.toolbar input {
+  width: min(520px, 100%);
+  height: 44px;
+  border: 1px solid #d1d5db;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+  padding: 0 14px;
+  outline: none;
+}
+
+.toolbar input:focus {
+  border-color: #1e3a5f;
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
+}
+
+.competitionGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.competitionCard {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(30, 58, 95, 0.05);
+}
+
+.cardDate {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  background: #1e3a5f;
+  color: #ffffff;
+  padding: 20px;
+}
+
+.cardDate span {
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cardDate strong {
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.cardBody {
+  padding: 20px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cardHeader h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 21px;
+}
+
+.cardHeader p {
+  margin: 7px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.statusUpcoming,
+.statusPast {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.statusUpcoming {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.statusPast {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.cardMeta {
+  display: grid;
+  gap: 5px;
+  margin-top: 18px;
+}
+
+.cardMeta span {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cardMeta strong {
+  color: #1e3a5f;
+  font-size: 15px;
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.cardActions button {
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 12px;
+}
+
+.categoriesButton {
+  background: #1e3a5f;
+  color: #ffffff;
+}
+
+.categoriesButton:hover {
+  background: #142a44;
+}
+
+.applicationsButton {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.applicationsButton:hover {
+  background: #d1fadf;
+}
+
+.editButton {
+  background: #eef4ff;
+  color: #1e3a5f;
+}
+
+.editButton:hover {
+  background: #dbe8ff;
+}
+
+.deleteButton {
+  background: #fff1f2;
+  color: #c62828;
+}
+
+.deleteButton:hover {
+  background: #ffe4e6;
+}
+
+.categoriesPanel {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+.applicationsPanel {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+.categoriesHeader,
+.applicationsHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.categoriesHeader h3,
+.applicationsHeader h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 16px;
+}
+
+.categoriesHeader p,
+.applicationsHeader p {
+  margin: 5px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.applicationsList {
+  display: grid;
+  gap: 10px;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.48);
+  padding: 24px;
+}
+
+.applicationsModal {
+  width: min(920px, 100%);
+  max-height: min(720px, calc(100vh - 48px));
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+  padding: 24px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+}
+
+.modalHeader span {
+  display: block;
+  color: #c62828;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.modalHeader h2 {
+  margin: 8px 0 0;
+  color: #111827;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.modalHeader p {
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.modalHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exportButton {
+  height: 38px;
+  border: 0;
+  border-radius: 10px;
+  background: #1e3a5f;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.exportButton:hover {
+  background: #142a44;
+}
+
+.closeModalButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1e3a5f;
+  cursor: pointer;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.closeModalButton:hover {
+  background: #f3f6fa;
+}
+
+.applicationItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  padding: 12px;
+}
+
+.applicationItem strong {
+  display: block;
+  color: #111827;
+  font-size: 14px;
+}
+
+.applicationItem span {
+  display: block;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.applicationItem p {
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.applicationActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.applicationStatus {
+  border-radius: 999px;
+  font-size: 12px !important;
+  font-weight: 700;
+  margin: 0 !important;
+  padding: 6px 10px;
+}
+
+.applicationStatusPending {
+  background: #eef4ff;
+  color: #1e3a5f !important;
+}
+
+.applicationStatusApproved {
+  background: #ecfdf3;
+  color: #067647 !important;
+}
+
+.applicationStatusRejected {
+  background: #fff1f2;
+  color: #c62828 !important;
+}
+
+.approveButton,
+.rejectButton,
+.deleteApplicationButton {
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 12px;
+}
+
+.approveButton {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.approveButton:hover {
+  background: #d1fadf;
+}
+
+.rejectButton,
+.deleteApplicationButton {
+  background: #fff1f2;
+  color: #c62828;
+}
+
+.rejectButton:hover,
+.deleteApplicationButton:hover {
+  background: #ffe4e6;
+}
+
+.approveButton:disabled,
+.rejectButton:disabled,
+.deleteApplicationButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.categoryBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: #1e3a5f;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 8px 7px 12px;
+}
+
+.categoryBadge button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: #dbe8ff;
+  color: #1e3a5f;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.categoryBadge button:hover {
+  background: #c7d9fb;
+}
+
+.categoryBadge button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.emptyCategories,
+.emptyApplications {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.categoryForm {
+  display: flex;
+  gap: 10px;
+}
+
+.categoryForm select {
+  width: min(260px, 100%);
+  height: 42px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+  padding: 0 12px;
+  outline: none;
+}
+
+.categoryForm select:focus {
+  border-color: #1e3a5f;
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
+}
+
+.categoryForm button {
+  border: 0;
+  border-radius: 10px;
+  background: #1e3a5f;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0 14px;
+}
+
+.categoryForm button:hover {
+  background: #142a44;
+}
+
+.categoryForm button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.emptyState,
+.emptyTable {
+  margin: 0;
+  color: #6b7280;
+}
+
+.emptyTable {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.errorState {
+  margin: 0;
+  border-radius: 10px;
+  background: #fff1f2;
+  color: #c62828;
+  padding: 16px 18px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+@media (max-width: 980px) {
+  .pageHeader,
+  .toolbar {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .summaryGrid,
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar input,
+  .addButton {
+    width: 100%;
+  }
+
+  .filterGroup {
+    width: 100%;
+  }
+
+  .filterButton,
+  .activeFilterButton {
+    flex: 1;
+  }
+
+  .competitionCard {
+    grid-template-columns: 1fr;
+  }
+
+  .formActions {
+    justify-content: stretch;
+  }
+
+  .formActions button,
+  .categoryForm button {
+    width: 100%;
+  }
+
+  .categoryForm {
+    flex-direction: column;
+  }
+
+  .categoryForm select {
+    width: 100%;
+  }
+
+  .applicationItem {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .applicationActions {
+    justify-content: flex-start;
+  }
+
+  .modalBackdrop {
+    align-items: stretch;
+    padding: 14px;
+  }
+
+  .applicationsModal {
+    max-height: calc(100vh - 28px);
+    padding: 18px;
+  }
+
+  .modalHeader {
+    gap: 12px;
+  }
+
+  .modalHeaderActions {
+    align-items: flex-end;
+    flex-direction: column-reverse;
+  }
+}
