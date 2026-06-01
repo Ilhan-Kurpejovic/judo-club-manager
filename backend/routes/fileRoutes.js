@@ -2,10 +2,20 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 const db = require("../db");
 
 const verifyToken = require("../middleware/authMiddleware");
 const checkRole = require("../middleware/roleMiddleware");
+
+const maxFileSizeInBytes = 10 * 1024 * 1024;
+const allowedMimeTypes = new Set([
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "image/jpeg",
+  "image/png",
+]);
 
 // podesavanje gdje se cuvaju fajlovi i kako se zovu
 const storage = multer.diskStorage({
@@ -18,7 +28,39 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: maxFileSizeInBytes,
+  },
+  fileFilter: (req, file, cb) => {
+    if (!allowedMimeTypes.has(file.mimetype)) {
+      return cb(
+        new Error("Dozvoljeni su samo PDF, DOC, DOCX, JPG i PNG fajlovi."),
+      );
+    }
+
+    return cb(null, true);
+  },
+});
+
+function handleFileUpload(req, res, next) {
+  upload.single("file")(req, res, (err) => {
+    if (!err) {
+      return next();
+    }
+
+    if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({
+        message: "Fajl je prevelik. Maksimalna velicina je 10 MB.",
+      });
+    }
+
+    return res.status(400).json({
+      message: err.message || "Upload fajla nije uspio.",
+    });
+  });
+}
 
 // GET svi fajlovi
 router.get("/", (req, res) => {
@@ -83,7 +125,7 @@ router.post(
   "/upload",
   verifyToken,
   checkRole("admin"),
-  upload.single("file"),
+  handleFileUpload,
   (req, res) => {
     const { member_id, file_type } = req.body;
 
@@ -126,28 +168,65 @@ router.post(
   },
 );
 
-// DELETE brisanje fajla iz baze
+// DELETE brisanje fajla iz baze i uploads foldera
 router.delete("/:id", verifyToken, checkRole("admin"), (req, res) => {
   const { id } = req.params;
 
-  const sql = "DELETE FROM files WHERE id = ?";
+  const findFileSql = "SELECT file_path FROM files WHERE id = ?";
 
-  db.query(sql, [id], (err, result) => {
+  db.query(findFileSql, [id], (err, results) => {
     if (err) {
-      console.error("Greška pri brisanju fajla:", err);
+      console.error("Greska pri citanju fajla za brisanje:", err);
       return res.status(500).json({
-        message: "Greška na serveru.",
+        message: "Greska na serveru.",
       });
     }
 
-    if (result.affectedRows === 0) {
+    if (results.length === 0) {
       return res.status(404).json({
-        message: "Fajl nije pronađen.",
+        message: "Fajl nije pronadjen.",
       });
     }
 
-    res.json({
-      message: "Fajl je uspješno obrisan iz evidencije.",
+    const filePath = results[0].file_path;
+    const uploadsDir = path.resolve(__dirname, "..", "uploads");
+    const absoluteFilePath = path.resolve(uploadsDir, path.basename(filePath));
+
+    if (!absoluteFilePath.startsWith(uploadsDir)) {
+      return res.status(400).json({
+        message: "Putanja fajla nije validna.",
+      });
+    }
+
+    const deleteSql = "DELETE FROM files WHERE id = ?";
+
+    db.query(deleteSql, [id], (err, result) => {
+      if (err) {
+        console.error("Greska pri brisanju fajla iz baze:", err);
+        return res.status(500).json({
+          message: "Greska na serveru.",
+        });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          message: "Fajl nije pronadjen.",
+        });
+      }
+
+      fs.unlink(absoluteFilePath, (err) => {
+        if (err && err.code !== "ENOENT") {
+          console.error("Greska pri brisanju fajla sa diska:", err);
+          return res.status(500).json({
+            message:
+              "Fajl je obrisan iz baze, ali nije obrisan iz uploads foldera.",
+          });
+        }
+
+        return res.json({
+          message: "Fajl je uspjesno obrisan.",
+        });
+      });
     });
   });
 });
