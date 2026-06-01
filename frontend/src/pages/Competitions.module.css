@@ -518,12 +518,6 @@
   font-size: 14px;
 }
 
-.modalHeaderActions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .exportButton {
   height: 38px;
   border: 0;
@@ -540,6 +534,14 @@
 
 .exportButton:hover {
   background: #142a44;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 18px;
+  padding-top: 18px;
 }
 
 .closeModalButton {
@@ -853,8 +855,8 @@
     gap: 12px;
   }
 
-  .modalHeaderActions {
-    align-items: flex-end;
-    flex-direction: column-reverse;
+  .modalFooter,
+  .modalFooter .exportButton {
+    width: 100%;
   }
 }

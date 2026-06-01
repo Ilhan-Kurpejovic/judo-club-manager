@@ -933,25 +933,13 @@ function Competitions() {
                       </p>
                     </div>
 
-                    <div className={styles.modalHeaderActions}>
-                      <button
-                        className={styles.exportButton}
-                        onClick={() =>
-                          exportApplicationsCsv(selectedApplicationsCompetition)
-                        }
-                        type="button"
-                      >
-                        Export CSV
-                      </button>
-
-                      <button
-                        className={styles.closeModalButton}
-                        onClick={closeApplicationsModal}
-                        type="button"
-                      >
-                        x
-                      </button>
-                    </div>
+                    <button
+                      className={styles.closeModalButton}
+                      onClick={closeApplicationsModal}
+                      type="button"
+                    >
+                      x
+                    </button>
                   </div>
 
                   <div className={styles.applicationsList}>
@@ -1052,6 +1040,18 @@ function Competitions() {
                         Nema prijava za ovo takmicenje.
                       </p>
                     )}
+                  </div>
+
+                  <div className={styles.modalFooter}>
+                    <button
+                      className={styles.exportButton}
+                      onClick={() =>
+                        exportApplicationsCsv(selectedApplicationsCompetition)
+                      }
+                      type="button"
+                    >
+                      Export CSV
+                    </button>
                   </div>
                 </div>
               </div>,
