@@ -5,6 +5,66 @@ const db = require("../db");
 const verifyToken = require("../middleware/authMiddleware");
 const checkRole = require("../middleware/roleMiddleware");
 
+const allowedAttendanceStatuses = new Set(["prisutan", "odsutan", "opravdano"]);
+
+function isValidAttendanceStatus(status) {
+  return allowedAttendanceStatuses.has(status || "prisutan");
+}
+
+function normalizeDateOnly(dateValue) {
+  if (!dateValue) {
+    return "";
+  }
+
+  if (dateValue instanceof Date) {
+    const localDate = new Date(
+      dateValue.getTime() - dateValue.getTimezoneOffset() * 60000,
+    );
+
+    return localDate.toISOString().slice(0, 10);
+  }
+
+  return String(dateValue).slice(0, 10);
+}
+
+function getTodayDate() {
+  const now = new Date();
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+
+  return localDate.toISOString().slice(0, 10);
+}
+
+function ensureTrainingCanBeEdited(trainingId, res, next) {
+  db.query(
+    "SELECT DATE_FORMAT(training_date, '%Y-%m-%d') AS training_date FROM trainings WHERE id = ?",
+    [trainingId],
+    (err, results) => {
+      if (err) {
+        console.error("Greska pri provjeri datuma treninga:", err);
+        return res.status(500).json({
+          message: "Greska na serveru.",
+        });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({
+          message: "Trening nije pronadjen.",
+        });
+      }
+
+      const trainingDate = normalizeDateOnly(results[0].training_date);
+
+      if (trainingDate !== getTodayDate()) {
+        return res.status(400).json({
+          message: "Prisustvo se moze mijenjati samo na dan treninga.",
+        });
+      }
+
+      return next();
+    },
+  );
+}
+
 router.get("/", (req, res) => {
   const sql = `
     SELECT
@@ -14,7 +74,7 @@ router.get("/", (req, res) => {
       a.status,
       m.first_name AS member_first_name,
       m.last_name AS member_last_name,
-      t.training_date,
+      DATE_FORMAT(t.training_date, '%Y-%m-%d') AS training_date,
       t.start_time,
       t.end_time,
       t.location,
@@ -81,7 +141,7 @@ router.get("/:id", (req, res) => {
       a.status,
       m.first_name AS member_first_name,
       m.last_name AS member_last_name,
-      t.training_date,
+      DATE_FORMAT(t.training_date, '%Y-%m-%d') AS training_date,
       t.start_time,
       t.end_time,
       t.location,
@@ -110,7 +170,8 @@ router.get("/:id", (req, res) => {
   });
 });
 
-// POST dodavanje prisustva za vise clanova odjednom!!!
+// POST cuvanje prisustva za vise clanova odjednom.
+// Prvo brise staru evidenciju za trening, pa upisuje novu.
 router.post("/bulk", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { training_id, attendance } = req.body;
 
@@ -120,29 +181,74 @@ router.post("/bulk", verifyToken, checkRole("admin", "trener"), (req, res) => {
     });
   }
 
-  const values = attendance.map((item) => [
-    item.member_id,
-    training_id,
-    item.status || "prisutan",
-  ]);
+  const hasInvalidStatus = attendance.some(
+    (item) => !isValidAttendanceStatus(item.status),
+  );
 
-  const sql = `
-    INSERT INTO attendance
-    (member_id, training_id, status)
-    VALUES ?
-  `;
+  if (hasInvalidStatus) {
+    return res.status(400).json({
+      message: "Status prisustva nije ispravan.",
+    });
+  }
 
-  db.query(sql, [values], (err, result) => {
+  ensureTrainingCanBeEdited(training_id, res, () => {
+    const values = attendance.map((item) => [
+      item.member_id,
+      training_id,
+      item.status || "prisutan",
+    ]);
+
+    db.beginTransaction((err) => {
     if (err) {
-      console.error("Greška pri dodavanju prisustva:", err);
+      console.error("Greska pri pokretanju transakcije za prisustvo:", err);
       return res.status(500).json({
-        message: "Greška na serveru.",
+        message: "Greska na serveru.",
       });
     }
 
-    res.status(201).json({
-      message: "Prisustvo za trening je uspješno sačuvano.",
-      insertedRows: result.affectedRows,
+    db.query("DELETE FROM attendance WHERE training_id = ?", [training_id], (err) => {
+      if (err) {
+        return db.rollback(() => {
+          console.error("Greska pri brisanju stare evidencije prisustva:", err);
+          return res.status(500).json({
+            message: "Greska na serveru.",
+          });
+        });
+      }
+
+      const sql = `
+        INSERT INTO attendance
+        (member_id, training_id, status)
+        VALUES ?
+      `;
+
+      db.query(sql, [values], (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error("Greska pri dodavanju prisustva:", err);
+            return res.status(500).json({
+              message: "Greska na serveru.",
+            });
+          });
+        }
+
+        db.commit((err) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Greska pri cuvanju evidencije prisustva:", err);
+              return res.status(500).json({
+                message: "Greska na serveru.",
+              });
+            });
+          }
+
+          return res.status(201).json({
+            message: "Prisustvo za trening je uspjesno sacuvano.",
+            insertedRows: result.affectedRows,
+          });
+        });
+      });
+    });
     });
   });
 });
@@ -157,29 +263,37 @@ router.post("/", verifyToken, checkRole("admin", "trener"), (req, res) => {
     });
   }
 
-  const sql = `
-    INSERT INTO attendance
-    (member_id, training_id, status)
-    VALUES (?, ?, ?)
-  `;
+  if (!isValidAttendanceStatus(status)) {
+    return res.status(400).json({
+      message: "Status prisustva nije ispravan.",
+    });
+  }
 
-  db.query(
-    sql,
-    [member_id, training_id, status || "prisutan"],
-    (err, result) => {
-      if (err) {
-        console.error("Greška pri dodavanju prisustva:", err);
-        return res.status(500).json({
-          message: "Greška na serveru.",
+  ensureTrainingCanBeEdited(training_id, res, () => {
+    const sql = `
+      INSERT INTO attendance
+      (member_id, training_id, status)
+      VALUES (?, ?, ?)
+    `;
+
+    db.query(
+      sql,
+      [member_id, training_id, status || "prisutan"],
+      (err, result) => {
+        if (err) {
+          console.error("Greška pri dodavanju prisustva:", err);
+          return res.status(500).json({
+            message: "Greška na serveru.",
+          });
+        }
+
+        res.status(201).json({
+          message: "Prisustvo je uspješno evidentirano.",
+          attendanceId: result.insertId,
         });
-      }
-
-      res.status(201).json({
-        message: "Prisustvo je uspješno evidentirano.",
-        attendanceId: result.insertId,
-      });
-    },
-  );
+      },
+    );
+  });
 });
 
 // PUT izmjena prisustva
@@ -193,28 +307,36 @@ router.put("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
     });
   }
 
-  const sql = `
-    UPDATE attendance
-    SET member_id = ?, training_id = ?, status = ?
-    WHERE id = ?
-  `;
+  if (!isValidAttendanceStatus(status)) {
+    return res.status(400).json({
+      message: "Status prisustva nije ispravan.",
+    });
+  }
 
-  db.query(sql, [member_id, training_id, status, id], (err, result) => {
-    if (err) {
-      console.error("Greška pri izmjeni prisustva:", err);
-      return res.status(500).json({
-        message: "Greška na serveru.",
+  ensureTrainingCanBeEdited(training_id, res, () => {
+    const sql = `
+      UPDATE attendance
+      SET member_id = ?, training_id = ?, status = ?
+      WHERE id = ?
+    `;
+
+    db.query(sql, [member_id, training_id, status, id], (err, result) => {
+      if (err) {
+        console.error("Greška pri izmjeni prisustva:", err);
+        return res.status(500).json({
+          message: "Greška na serveru.",
+        });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          message: "Evidencija prisustva nije pronađena.",
+        });
+      }
+
+      res.json({
+        message: "Prisustvo je uspješno izmijenjeno.",
       });
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Evidencija prisustva nije pronađena.",
-      });
-    }
-
-    res.json({
-      message: "Prisustvo je uspješno izmijenjeno.",
     });
   });
 });

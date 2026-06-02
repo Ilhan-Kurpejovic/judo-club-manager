@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
       name,
       city,
       country,
-      competition_date,
+      DATE_FORMAT(competition_date, '%Y-%m-%d') AS competition_date,
       organizer
     FROM competitions
     ORDER BY competition_date DESC
@@ -40,7 +40,7 @@ router.get("/:id", (req, res) => {
       name,
       city,
       country,
-      competition_date,
+      DATE_FORMAT(competition_date, '%Y-%m-%d') AS competition_date,
       organizer
     FROM competitions
     WHERE id = ?

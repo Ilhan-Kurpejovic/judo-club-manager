@@ -234,7 +234,20 @@ router.delete("/:id", verifyToken, checkRole("admin"), (req, res) => {
 
       const userId = rows[0].user_id;
 
-      db.query("DELETE FROM coaches WHERE id = ?", [id], (err, result) => {
+      db.query(
+        "UPDATE training_groups SET coach_id = NULL WHERE coach_id = ?",
+        [id],
+        (err) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Greska pri uklanjanju trenera iz grupa:", err);
+              return res.status(500).json({
+                message: "Greska na serveru.",
+              });
+            });
+          }
+
+          db.query("DELETE FROM coaches WHERE id = ?", [id], (err, result) => {
         if (err) {
           return db.rollback(() => {
             console.error("Greska pri brisanju trenera:", err);
@@ -286,6 +299,8 @@ router.delete("/:id", verifyToken, checkRole("admin"), (req, res) => {
           return finishDelete();
         });
       });
+        },
+      );
     });
   });
 });

@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
     SELECT 
       t.id,
       t.training_group_id,
-      t.training_date,
+      DATE_FORMAT(t.training_date, '%Y-%m-%d') AS training_date,
       t.start_time,
       t.end_time,
       t.location,
@@ -41,7 +41,7 @@ router.get("/:id", (req, res) => {
     SELECT 
       t.id,
       t.training_group_id,
-      t.training_date,
+      DATE_FORMAT(t.training_date, '%Y-%m-%d') AS training_date,
       t.start_time,
       t.end_time,
       t.location,

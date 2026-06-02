@@ -1,6 +1,5 @@
 import {
   CalendarDays,
-  ClipboardCheck,
   CreditCard,
   Dumbbell,
   FileText,
@@ -27,14 +26,12 @@ const navigationByRole = {
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/coach-groups", label: "Moje grupe", icon: Dumbbell },
     { to: "/coach-members", label: "Clanovi", icon: Users },
-    { to: "/coach-trainings", label: "Treninzi", icon: CalendarDays },
     {
       to: "/attendance",
-      label: "Evidencija prisustva",
-      icon: ClipboardCheck,
+      label: "Treninzi",
+      icon: CalendarDays,
     },
     { to: "/coach-competitions", label: "Takmicenja", icon: Medal },
-    { to: "/coach-files", label: "Fajlovi", icon: FileText },
   ],
   clan: [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }],
 };

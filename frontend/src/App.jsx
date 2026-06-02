@@ -2,10 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Attendance from "./pages/coach/Attendance";
 import Coaches from "./pages/Coaches";
 import CoachCompetitions from "./pages/coach/CoachCompetitions";
-import CoachFiles from "./pages/coach/CoachFiles";
 import CoachGroups from "./pages/coach/CoachGroups";
 import CoachMembers from "./pages/coach/CoachMembers";
-import CoachTrainings from "./pages/coach/CoachTrainings";
 import Competitions from "./pages/Competitions";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import Dashboard from "./pages/Dashboard";
@@ -41,10 +39,8 @@ function App() {
           <Route path="/files" element={<Files />} />
           <Route path="/coach-groups" element={<CoachGroups />} />
           <Route path="/coach-members" element={<CoachMembers />} />
-          <Route path="/coach-trainings" element={<CoachTrainings />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/coach-competitions" element={<CoachCompetitions />} />
-          <Route path="/coach-files" element={<CoachFiles />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

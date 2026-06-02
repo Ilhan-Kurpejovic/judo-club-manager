@@ -5,6 +5,12 @@ const db = require("../db");
 const verifyToken = require("../middleware/authMiddleware");
 const checkRole = require("../middleware/roleMiddleware");
 
+const allowedMedals = new Set(["zlato", "srebro", "bronza", "bez medalje"]);
+
+function isValidMedal(medal) {
+  return allowedMedals.has(medal || "bez medalje");
+}
+
 // GET svi rezultati sa svih takmicenja
 router.get("/", (req, res) => {
   const sql = `
@@ -20,7 +26,7 @@ router.get("/", (req, res) => {
       c.name AS competition_name,
       c.city,
       c.country,
-      c.competition_date
+      DATE_FORMAT(c.competition_date, '%Y-%m-%d') AS competition_date
     FROM competition_results cr
     LEFT JOIN members m ON cr.member_id = m.id
     LEFT JOIN competitions c ON cr.competition_id = c.id
@@ -29,9 +35,9 @@ router.get("/", (req, res) => {
 
   db.query(sql, (err, results) => {
     if (err) {
-      console.error("Greška pri čitanju rezultata:", err);
+      console.error("Greska pri citanju rezultata:", err);
       return res.status(500).json({
-        message: "Greška na serveru.",
+        message: "Greska na serveru.",
       });
     }
 
@@ -54,7 +60,7 @@ router.get("/member/:memberId", (req, res) => {
       c.name AS competition_name,
       c.city,
       c.country,
-      c.competition_date
+      DATE_FORMAT(c.competition_date, '%Y-%m-%d') AS competition_date
     FROM competition_results cr
     LEFT JOIN competitions c ON cr.competition_id = c.id
     WHERE cr.member_id = ?
@@ -63,9 +69,9 @@ router.get("/member/:memberId", (req, res) => {
 
   db.query(sql, [memberId], (err, results) => {
     if (err) {
-      console.error("Greška pri čitanju rezultata člana:", err);
+      console.error("Greska pri citanju rezultata clana:", err);
       return res.status(500).json({
-        message: "Greška na serveru.",
+        message: "Greska na serveru.",
       });
     }
 
@@ -73,7 +79,7 @@ router.get("/member/:memberId", (req, res) => {
   });
 });
 
-// GET svi rezultati jednog takmičenja
+// GET svi rezultati jednog takmicenja
 router.get("/competition/:competitionId", (req, res) => {
   const { competitionId } = req.params;
 
@@ -88,18 +94,19 @@ router.get("/competition/:competitionId", (req, res) => {
       m.first_name AS member_first_name,
       m.last_name AS member_last_name,
       m.belt,
-      m.weight_category
+      m.weight_category,
+      m.age_category
     FROM competition_results cr
     LEFT JOIN members m ON cr.member_id = m.id
     WHERE cr.competition_id = ?
-    ORDER BY cr.medal ASC, m.last_name ASC, m.first_name ASC
+    ORDER BY m.last_name ASC, m.first_name ASC
   `;
 
   db.query(sql, [competitionId], (err, results) => {
     if (err) {
-      console.error("Greška pri čitanju rezultata takmičenja:", err);
+      console.error("Greska pri citanju rezultata takmicenja:", err);
       return res.status(500).json({
-        message: "Greška na serveru.",
+        message: "Greska na serveru.",
       });
     }
 
@@ -124,7 +131,7 @@ router.get("/:id", (req, res) => {
       c.name AS competition_name,
       c.city,
       c.country,
-      c.competition_date
+      DATE_FORMAT(c.competition_date, '%Y-%m-%d') AS competition_date
     FROM competition_results cr
     LEFT JOIN members m ON cr.member_id = m.id
     LEFT JOIN competitions c ON cr.competition_id = c.id
@@ -133,15 +140,15 @@ router.get("/:id", (req, res) => {
 
   db.query(sql, [id], (err, results) => {
     if (err) {
-      console.error("Greška pri čitanju rezultata:", err);
+      console.error("Greska pri citanju rezultata:", err);
       return res.status(500).json({
-        message: "Greška na serveru.",
+        message: "Greska na serveru.",
       });
     }
 
     if (results.length === 0) {
       return res.status(404).json({
-        message: "Rezultat nije pronađen.",
+        message: "Rezultat nije pronadjen.",
       });
     }
 
@@ -149,52 +156,130 @@ router.get("/:id", (req, res) => {
   });
 });
 
-// POST dodavanje rezultata za vise takmicara odjednom!!!
+// POST cuvanje rezultata za vise takmicara odjednom.
+// Prvo brise stare rezultate za takmicenje, pa upisuje novo stanje.
 router.post("/bulk", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { competition_id, results } = req.body;
 
   if (!competition_id || !Array.isArray(results) || results.length === 0) {
     return res.status(400).json({
-      message: "Takmičenje i lista rezultata su obavezni.",
+      message: "Takmicenje i lista rezultata su obavezni.",
+    });
+  }
+
+  const hasInvalidMedal = results.some((item) => !isValidMedal(item.medal));
+
+  if (hasInvalidMedal) {
+    return res.status(400).json({
+      message: "Medalja moze biti: zlato, srebro, bronza ili bez medalje.",
     });
   }
 
   const values = results.map((item) => [
     item.member_id,
     competition_id,
-    item.category,
-    item.placement,
+    item.category || null,
+    item.placement || null,
     item.medal || "bez medalje",
   ]);
 
-  const sql = `
-    INSERT INTO competition_results
-    (member_id, competition_id, category, placement, medal)
-    VALUES ?
-  `;
-
-  db.query(sql, [values], (err, result) => {
+  db.beginTransaction((err) => {
     if (err) {
-      console.error("Greška pri dodavanju rezultata:", err);
+      console.error("Greska pri pokretanju transakcije za rezultate:", err);
       return res.status(500).json({
-        message: "Greška na serveru.",
+        message: "Greska na serveru.",
       });
     }
 
-    res.status(201).json({
-      message: "Rezultati za takmičenje su uspješno sačuvani.",
-      insertedRows: result.affectedRows,
-    });
+    db.query(
+      "DELETE FROM competition_results WHERE competition_id = ?",
+      [competition_id],
+      (err) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error("Greska pri brisanju starih rezultata:", err);
+            return res.status(500).json({
+              message: "Greska na serveru.",
+            });
+          });
+        }
+
+        const sql = `
+          INSERT INTO competition_results
+          (member_id, competition_id, category, placement, medal)
+          VALUES ?
+        `;
+
+        db.query(sql, [values], (err, result) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Greska pri dodavanju rezultata:", err);
+              return res.status(500).json({
+                message: "Greska na serveru.",
+              });
+            });
+          }
+
+          db.commit((err) => {
+            if (err) {
+              return db.rollback(() => {
+                console.error("Greska pri cuvanju rezultata:", err);
+                return res.status(500).json({
+                  message: "Greska na serveru.",
+                });
+              });
+            }
+
+            return res.status(201).json({
+              message: "Rezultati za takmicenje su uspjesno sacuvani.",
+              insertedRows: result.affectedRows,
+            });
+          });
+        });
+      },
+    );
   });
 });
 
-// POST dodavanje rezultata
+// DELETE svi rezultati jednog takmicenja
+router.delete(
+  "/competition/:competitionId",
+  verifyToken,
+  checkRole("admin", "trener"),
+  (req, res) => {
+    const { competitionId } = req.params;
+
+    const sql = "DELETE FROM competition_results WHERE competition_id = ?";
+
+    db.query(sql, [competitionId], (err, result) => {
+      if (err) {
+        console.error("Greska pri brisanju rezultata takmicenja:", err);
+        return res.status(500).json({
+          message: "Greska na serveru.",
+        });
+      }
+
+      res.json({
+        message: "Rezultati takmicenja su uspjesno obrisani.",
+        deletedRows: result.affectedRows,
+      });
+    });
+  },
+);
+
+// POST dodavanje jednog rezultata
 router.post("/", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { member_id, competition_id, category, placement, medal } = req.body;
 
   if (!member_id || !competition_id) {
     return res.status(400).json({
-      message: "Član i takmičenje su obavezni.",
+      message: "Clan i takmicenje su obavezni.",
+    });
+  }
+
+  if (!isValidMedal(medal)) {
+    return res.status(400).json({
+      message: "Medalja moze biti: zlato, srebro, bronza ili bez medalje.",
     });
   }
 
@@ -209,28 +294,34 @@ router.post("/", verifyToken, checkRole("admin", "trener"), (req, res) => {
     [member_id, competition_id, category, placement, medal || "bez medalje"],
     (err, result) => {
       if (err) {
-        console.error("Greška pri dodavanju rezultata:", err);
+        console.error("Greska pri dodavanju rezultata:", err);
         return res.status(500).json({
-          message: "Greška na serveru.",
+          message: "Greska na serveru.",
         });
       }
 
       res.status(201).json({
-        message: "Rezultat je uspješno dodat.",
+        message: "Rezultat je uspjesno dodat.",
         competitionResultId: result.insertId,
       });
     },
   );
 });
 
-// PUT izmjena rezultata
+// PUT izmjena jednog rezultata
 router.put("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { id } = req.params;
   const { member_id, competition_id, category, placement, medal } = req.body;
 
   if (!member_id || !competition_id) {
     return res.status(400).json({
-      message: "Član i takmičenje su obavezni.",
+      message: "Clan i takmicenje su obavezni.",
+    });
+  }
+
+  if (!isValidMedal(medal)) {
+    return res.status(400).json({
+      message: "Medalja moze biti: zlato, srebro, bronza ili bez medalje.",
     });
   }
 
@@ -247,29 +338,29 @@ router.put("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
 
   db.query(
     sql,
-    [member_id, competition_id, category, placement, medal, id],
+    [member_id, competition_id, category, placement, medal || "bez medalje", id],
     (err, result) => {
       if (err) {
-        console.error("Greška pri izmjeni rezultata:", err);
+        console.error("Greska pri izmjeni rezultata:", err);
         return res.status(500).json({
-          message: "Greška na serveru.",
+          message: "Greska na serveru.",
         });
       }
 
       if (result.affectedRows === 0) {
         return res.status(404).json({
-          message: "Rezultat nije pronađen.",
+          message: "Rezultat nije pronadjen.",
         });
       }
 
       res.json({
-        message: "Rezultat je uspješno izmijenjen.",
+        message: "Rezultat je uspjesno izmijenjen.",
       });
     },
   );
 });
 
-// DELETE brisanje rezultata
+// DELETE brisanje jednog rezultata
 router.delete("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
   const { id } = req.params;
 
@@ -277,20 +368,20 @@ router.delete("/:id", verifyToken, checkRole("admin", "trener"), (req, res) => {
 
   db.query(sql, [id], (err, result) => {
     if (err) {
-      console.error("Greška pri brisanju rezultata:", err);
+      console.error("Greska pri brisanju rezultata:", err);
       return res.status(500).json({
-        message: "Greška na serveru.",
+        message: "Greska na serveru.",
       });
     }
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
-        message: "Rezultat nije pronađen.",
+        message: "Rezultat nije pronadjen.",
       });
     }
 
     res.json({
-      message: "Rezultat je uspješno obrisan.",
+      message: "Rezultat je uspjesno obrisan.",
     });
   });
 });
