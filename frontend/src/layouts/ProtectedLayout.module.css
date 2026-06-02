@@ -117,16 +117,27 @@
 
 .body {
   display: grid;
-  grid-template-columns: 308px 1fr;
+  grid-template-columns: 280px 1fr;
   min-height: calc(100vh - 82px);
 }
 
 .sidebar {
+  position: relative;
   background: #1e3a5f;
   border-right: 0;
   display: flex;
   flex-direction: column;
   padding: 32px 12px 24px;
+}
+
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 128px;
+  height: 4px;
+  background: #c62828;
 }
 
 .sidebar nav {
@@ -185,6 +196,29 @@
   color: #ffffff;
 }
 
+.sidebarFooter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.11);
+  color: rgba(255, 255, 255, 0.56);
+  margin: auto -12px -24px;
+  padding: 18px 16px;
+}
+
+.sidebarFooter span {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #ef4444;
+  flex: 0 0 auto;
+}
+
+.sidebarFooter small {
+  font-size: 12px;
+  line-height: 1;
+}
+
 .content {
   background: #f3f6fa;
   padding: 34px 35px;
@@ -218,6 +252,11 @@
     border-right: 0;
     border-bottom: 1px solid #d1d5db;
     padding: 14px;
+  }
+
+  .sidebar::before,
+  .sidebarFooter {
+    display: none;
   }
 
   .sidebar nav {

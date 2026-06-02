@@ -90,6 +90,11 @@ function ProtectedLayout() {
               );
             })}
           </nav>
+
+          <div className={styles.sidebarFooter}>
+            <span></span>
+            <small>© 2026 Judo Club Manager</small>
+          </div>
         </aside>
 
         <main className={styles.content}>
