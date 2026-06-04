@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 import CoachDashboard from "./coach/CoachDashboard";
+import MemberDashboard from "./members/MemberDashboard";
 import styles from "./Dashboard.module.css";
 
 const paidStatus = "plaćeno";
@@ -119,6 +120,8 @@ function Dashboard() {
     <section className={styles.dashboardPage}>
       {user?.role_name === "trener" && !isLoading && !error ? (
         <CoachDashboard user={user} />
+      ) : user?.role_name === "clan" && !isLoading && !error ? (
+        <MemberDashboard user={user} />
       ) : (
         <>
       <div className={styles.pageHeader}>
