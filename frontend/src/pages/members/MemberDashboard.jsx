@@ -79,6 +79,20 @@ function isPaid(status) {
   return String(status || "").toLowerCase() === "plaćeno";
 }
 
+function getApplicationStatusClass(status) {
+  const normalizedStatus = String(status || "").toLowerCase();
+
+  if (normalizedStatus === "odobreno") {
+    return styles.applicationApproved;
+  }
+
+  if (normalizedStatus === "odbijeno") {
+    return styles.applicationRejected;
+  }
+
+  return styles.applicationPending;
+}
+
 function MemberDashboard({ user }) {
   const [trainings, setTrainings] = useState([]);
   const [memberships, setMemberships] = useState([]);
@@ -280,7 +294,9 @@ function MemberDashboard({ user }) {
                   <span>{formatDate(application.competition_date)}</span>
                 </div>
 
-                <small>{application.status}</small>
+                <small className={getApplicationStatusClass(application.status)}>
+                  {application.status}
+                </small>
               </div>
             ))}
           </div>

@@ -107,7 +107,7 @@ function CoachMembers() {
           setUser(currentUser);
           setGroups(groupsData);
           setMembers(membersData);
-          localStorage.setItem("user", JSON.stringify(currentUser));
+          sessionStorage.setItem("user", JSON.stringify(currentUser));
         }
       } catch (error) {
         if (isActive) {

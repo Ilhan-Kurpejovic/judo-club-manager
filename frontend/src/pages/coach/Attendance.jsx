@@ -239,7 +239,7 @@ function Attendance() {
           setTrainings(trainingsData);
           setMembers(membersData);
           setAttendanceRecords(attendanceData);
-          localStorage.setItem("user", JSON.stringify(currentUser));
+          sessionStorage.setItem("user", JSON.stringify(currentUser));
         }
       } catch (error) {
         if (isActive) {

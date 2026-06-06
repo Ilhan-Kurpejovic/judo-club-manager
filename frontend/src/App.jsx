@@ -9,6 +9,11 @@ import ProtectedLayout from "./layouts/ProtectedLayout";
 import Dashboard from "./pages/Dashboard";
 import Files from "./pages/Files";
 import Login from "./pages/Login";
+import MemberCompetitions from "./pages/members/MemberCompetitions";
+import MemberFiles from "./pages/members/MemberFiles";
+import MemberMemberships from "./pages/members/MemberMemberships";
+import MemberResults from "./pages/members/MemberResults";
+import MemberTrainings from "./pages/members/MemberTrainings";
 import Memberships from "./pages/Memberships";
 import Members from "./pages/Members";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -41,6 +46,11 @@ function App() {
           <Route path="/coach-members" element={<CoachMembers />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/coach-competitions" element={<CoachCompetitions />} />
+          <Route path="/member-trainings" element={<MemberTrainings />} />
+          <Route path="/member-memberships" element={<MemberMemberships />} />
+          <Route path="/member-competitions" element={<MemberCompetitions />} />
+          <Route path="/member-results" element={<MemberResults />} />
+          <Route path="/member-files" element={<MemberFiles />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

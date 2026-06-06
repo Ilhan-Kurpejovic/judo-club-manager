@@ -1,0 +1,295 @@
+.membershipsPage {
+  width: 100%;
+}
+
+.pageHeader {
+  margin-bottom: 24px;
+}
+
+.accentLine {
+  display: block;
+  width: 46px;
+  height: 4px;
+  border-radius: 999px;
+  background: #c62828;
+  margin-bottom: 20px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.titleRow h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 29px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.titleRow p {
+  margin: 12px 0 0;
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.titleRow strong {
+  color: #1e3a5f;
+}
+
+.yearControl {
+  display: grid;
+  gap: 7px;
+  min-width: 150px;
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.yearControl input {
+  height: 44px;
+  border: 1px solid #d1d5db;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+  padding: 0 14px;
+  outline: none;
+}
+
+.yearControl input:focus {
+  border-color: #1e3a5f;
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.summaryCard {
+  min-height: 145px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 13px;
+  box-shadow: 0 8px 20px rgba(30, 58, 95, 0.05);
+  padding: 20px;
+}
+
+.summaryCard span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.summaryCard strong {
+  display: block;
+  margin-top: 14px;
+  color: #1e3a5f;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.summaryCard small {
+  display: block;
+  margin-top: 16px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.paidCard {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.paidCard strong {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #067647;
+  font-size: 25px;
+  box-shadow: 0 0 0 6px rgba(6, 118, 71, 0.08);
+}
+
+.unpaidCard {
+  border-color: #fecaca;
+  background: #fffafa;
+}
+
+.unpaidCard strong {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #fff1f2;
+  color: #c62828;
+  font-size: 25px;
+  box-shadow: 0 0 0 6px rgba(198, 40, 40, 0.08);
+}
+
+.yearPanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 13px;
+  box-shadow: 0 8px 20px rgba(30, 58, 95, 0.05);
+  margin-bottom: 18px;
+  padding: 20px;
+}
+
+.yearPanel h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 20px;
+}
+
+.yearPanel p {
+  margin: 7px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.yearPanel strong {
+  flex: 0 0 auto;
+  border-left: 4px solid #c62828;
+  border-radius: 11px;
+  background: #f9fafb;
+  color: #1e3a5f;
+  font-size: 22px;
+  padding: 13px 18px;
+}
+
+.tableCard {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 13px;
+  box-shadow: 0 8px 20px rgba(30, 58, 95, 0.05);
+}
+
+.tableCard table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableCard th,
+.tableCard td {
+  padding: 16px 18px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tableCard th {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #f9fafb;
+}
+
+.tableCard td {
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.tableCard tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.tableCard tbody tr:hover {
+  background: #f9fafb;
+}
+
+.tableCard td strong {
+  display: block;
+  color: #111827;
+  font-size: 15px;
+}
+
+.tableCard td > span:not(.statusPaid):not(.statusUnpaid) {
+  display: block;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.statusPaid,
+.statusUnpaid {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 11px;
+}
+
+.statusPaid {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.statusUnpaid {
+  background: #fff1f2;
+  color: #c62828;
+}
+
+.emptyState {
+  margin: 0;
+  color: #6b7280;
+}
+
+.errorState {
+  margin: 0;
+  border-radius: 10px;
+  background: #fff1f2;
+  color: #c62828;
+  padding: 16px 18px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+@media (max-width: 1100px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .titleRow,
+  .yearPanel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .tableCard {
+    overflow-x: auto;
+  }
+
+  .tableCard table {
+    min-width: 720px;
+  }
+}

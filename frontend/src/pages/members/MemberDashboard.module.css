@@ -176,6 +176,21 @@
   white-space: nowrap;
 }
 
+.listItem .applicationApproved {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.listItem .applicationRejected {
+  background: #fff1f2;
+  color: #c62828;
+}
+
+.listItem .applicationPending {
+  background: #eef4ff;
+  color: #1e3a5f;
+}
+
 .welcomeCard {
   padding: 28px;
 }

@@ -62,7 +62,7 @@ function Dashboard() {
         const currentUser = response.data.user;
 
         setUser(currentUser);
-        localStorage.setItem("user", JSON.stringify(currentUser));
+        sessionStorage.setItem("user", JSON.stringify(currentUser));
 
         if (currentUser.role_name === "admin") {
           const [members, coaches, trainingGroups, memberships] =
@@ -104,8 +104,8 @@ function Dashboard() {
         );
 
         if (error.response?.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
+          sessionStorage.removeItem("token");
+          sessionStorage.removeItem("user");
           navigate("/login");
         }
       } finally {
