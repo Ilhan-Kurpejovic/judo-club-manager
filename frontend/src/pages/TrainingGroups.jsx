@@ -313,15 +313,15 @@ function TrainingGroups() {
                   onClick={closeForm}
                   type="button"
                 >
-                  Cancel
+                  Odustani
                 </button>
 
                 <button disabled={isSubmitting} type="submit">
                   {isSubmitting
                     ? "Saving..."
                     : editingGroupId
-                      ? "Save changes"
-                      : "Create group"}
+                      ? "Sačuvaj izmjene"
+                      : "Kreiraj trening grupu"}
                 </button>
               </div>
             </form>

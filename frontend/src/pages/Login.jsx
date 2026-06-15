@@ -109,7 +109,7 @@ function Login() {
 
           <p className={styles.loginNote}>
             Isključivo autorizovan pristup. Kontaktirajte administratora kluba
-            za svoj akaunt.
+            za kreiranje akaunta.
           </p>
         </form>
       </section>

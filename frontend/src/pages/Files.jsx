@@ -302,7 +302,7 @@ function Files() {
                   onClick={closeForm}
                   type="button"
                 >
-                  Cancel
+                  Odustani
                 </button>
 
                 <button disabled={isSubmitting} type="submit">
@@ -401,7 +401,7 @@ function Files() {
                       onClick={() => handleDeleteFile(file)}
                       type="button"
                     >
-                      Delete
+                      Obriši
                     </button>
                   </div>
                 </div>

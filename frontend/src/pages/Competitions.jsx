@@ -731,7 +731,7 @@ function Competitions() {
                   onClick={closeForm}
                   type="button"
                 >
-                  Cancel
+                  Odustani
                 </button>
 
                 <button disabled={isSubmitting} type="submit">
