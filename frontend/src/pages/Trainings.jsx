@@ -13,8 +13,8 @@ const initialTrainingForm = {
 
 const scheduleFilters = [
   { label: "Svi", value: "all" },
-  { label: "Buduci", value: "upcoming" },
-  { label: "Prosli", value: "past" },
+  { label: "Budući", value: "upcoming" },
+  { label: "Prošli", value: "past" },
 ];
 
 async function fetchTrainings() {
@@ -155,7 +155,9 @@ function Trainings() {
         }
       } catch (error) {
         if (isActive) {
-          setError(error.response?.data?.message || "Could not load trainings.");
+          setError(
+            error.response?.data?.message || "Could not load trainings.",
+          );
         }
       } finally {
         if (isActive) {
@@ -243,7 +245,10 @@ function Trainings() {
 
     try {
       if (editingTrainingId) {
-        await axiosInstance.put(`/trainings/${editingTrainingId}`, trainingPayload);
+        await axiosInstance.put(
+          `/trainings/${editingTrainingId}`,
+          trainingPayload,
+        );
         setPageSuccess("Training updated successfully.");
       } else {
         await axiosInstance.post("/trainings", trainingPayload);
@@ -292,11 +297,16 @@ function Trainings() {
           <span className={styles.accentLine}></span>
           <h1>Treninzi</h1>
           <p>
-            Raspored termina po trening grupama, lokacijama i vremenu odrzavanja.
+            Raspored termina po trening grupama, lokacijama i vremenu
+            održavanja.
           </p>
         </div>
 
-        <button className={styles.addButton} onClick={openCreateForm} type="button">
+        <button
+          className={styles.addButton}
+          onClick={openCreateForm}
+          type="button"
+        >
           Dodaj trening
         </button>
       </div>
@@ -316,12 +326,12 @@ function Trainings() {
             </article>
 
             <article>
-              <span>Buduci termini</span>
+              <span>Budući termini</span>
               <strong>{upcomingTrainingsCount}</strong>
             </article>
 
             <article>
-              <span>Zavrseni termini</span>
+              <span>Završeni termini</span>
               <strong>{pastTrainingsCount}</strong>
             </article>
           </div>
@@ -333,7 +343,7 @@ function Trainings() {
               ref={formRef}
             >
               <div className={styles.formHeader}>
-                <h2>{editingTrainingId ? "Edit training" : "Add training"}</h2>
+                <h2>{editingTrainingId ? "Uredi trening" : "Dodaj trening"}</h2>
                 <p>
                   {editingTrainingId
                     ? "Update date, time and location for this training."
@@ -353,7 +363,8 @@ function Trainings() {
                     <option value="">Odaberi trening grupu</option>
                     {trainingGroups.map((group) => (
                       <option key={group.id} value={group.id}>
-                        {group.name} {group.age_category ? `- ${group.age_category}` : ""}
+                        {group.name}{" "}
+                        {group.age_category ? `- ${group.age_category}` : ""}
                       </option>
                     ))}
                   </select>
@@ -430,8 +441,8 @@ function Trainings() {
                   {isSubmitting
                     ? "Saving..."
                     : editingTrainingId
-                      ? "Save changes"
-                      : "Create training"}
+                      ? "Sačuvaj izmjene"
+                      : "Kreiraj trening"}
                 </button>
               </div>
             </form>
@@ -440,7 +451,9 @@ function Trainings() {
           <div className={styles.scheduleToolbar}>
             <div>
               <h2>Raspored</h2>
-              <p>Pregled termina kroz kartice, sortirano po datumu i vremenu.</p>
+              <p>
+                Pregled termina kroz kartice, sortirano po datumu i vremenu.
+              </p>
             </div>
 
             <div className={styles.scheduleControls}>
@@ -473,7 +486,9 @@ function Trainings() {
 
           <div className={styles.timelineGrid}>
             {filteredTrainings.map((training) => {
-              const normalizedDate = normalizeDateForInput(training.training_date);
+              const normalizedDate = normalizeDateForInput(
+                training.training_date,
+              );
               const isPastTraining = normalizedDate < todayDate;
 
               return (
@@ -481,7 +496,8 @@ function Trainings() {
                   <div className={styles.dateBlock}>
                     <span>{formatDate(training.training_date)}</span>
                     <strong>
-                      {formatTime(training.start_time)} - {formatTime(training.end_time)}
+                      {formatTime(training.start_time)} -{" "}
+                      {formatTime(training.end_time)}
                     </strong>
                   </div>
 
@@ -504,11 +520,15 @@ function Trainings() {
                     </div>
 
                     <div className={styles.cardMeta}>
-                      <span>{training.location || "Lokacija nije unijeta"}</span>
+                      <span>
+                        {training.location || "Lokacija nije unijeta"}
+                      </span>
                     </div>
 
                     {training.description && (
-                      <p className={styles.description}>{training.description}</p>
+                      <p className={styles.description}>
+                        {training.description}
+                      </p>
                     )}
 
                     <div className={styles.cardActions}>
@@ -517,7 +537,7 @@ function Trainings() {
                         onClick={() => openEditForm(training)}
                         type="button"
                       >
-                        Edit
+                        Uredi
                       </button>
 
                       <button
@@ -525,7 +545,7 @@ function Trainings() {
                         onClick={() => handleDeleteTraining(training)}
                         type="button"
                       >
-                        Delete
+                        Obriši
                       </button>
                     </div>
                   </div>

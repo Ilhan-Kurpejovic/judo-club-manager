@@ -216,7 +216,7 @@ function Coaches() {
           onClick={isFormOpen ? closeForm : toggleCreateForm}
           type="button"
         >
-          {isFormOpen ? "Close form" : "Add coach"}
+          {isFormOpen ? "Zatvori formu" : "Dodaj trenera"}
         </button>
       </div>
 
@@ -231,17 +231,17 @@ function Coaches() {
           {isFormOpen && (
             <form className={styles.coachForm} onSubmit={handleSubmitCoach}>
               <div className={styles.formHeader}>
-                <h2>{editingCoachId ? "Edit coach" : "Add coach"}</h2>
+                <h2>{editingCoachId ? "Uredi trenera" : "Kreiraj trenera"}</h2>
                 <p>
                   {editingCoachId
-                    ? "Update coach profile details."
-                    : "Create a coach profile and initial login account."}
+                    ? "Dodaj informacije o treneru."
+                    : "Kreiraj prifil trenera i njegovu prijavnu formu."}
                 </p>
               </div>
 
               <div className={styles.formGrid}>
                 <label>
-                  First name
+                  Ime
                   <input
                     name="first_name"
                     onChange={handleFormChange}
@@ -252,7 +252,7 @@ function Coaches() {
                 </label>
 
                 <label>
-                  Last name
+                  Prezime
                   <input
                     name="last_name"
                     onChange={handleFormChange}
@@ -265,7 +265,7 @@ function Coaches() {
                 {!editingCoachId && (
                   <>
                     <label>
-                      Login email
+                      Email za prijavu
                       <input
                         name="login_email"
                         onChange={handleFormChange}
@@ -276,7 +276,7 @@ function Coaches() {
                     </label>
 
                     <label>
-                      Initial password
+                      Inicijalna lozinka
                       <input
                         name="initial_password"
                         onChange={handleFormChange}
@@ -289,7 +289,7 @@ function Coaches() {
                 )}
 
                 <label>
-                  Contact email
+                  Kontakt email
                   <input
                     name="email"
                     onChange={handleFormChange}
@@ -299,7 +299,7 @@ function Coaches() {
                 </label>
 
                 <label>
-                  Phone
+                  Broj telefona
                   <input
                     name="phone"
                     onChange={handleFormChange}
@@ -309,7 +309,7 @@ function Coaches() {
                 </label>
 
                 <label className={styles.fullWidthField}>
-                  Specialization
+                  Specijalizacija
                   <input
                     name="specialization"
                     onChange={handleFormChange}
@@ -335,8 +335,8 @@ function Coaches() {
                   {isSubmitting
                     ? "Saving..."
                     : editingCoachId
-                      ? "Save changes"
-                      : "Create coach"}
+                      ? "Sačuvaj izmjene"
+                      : "Kreiraj trenera"}
                 </button>
               </div>
             </form>
@@ -344,17 +344,17 @@ function Coaches() {
 
           <div className={styles.summaryGrid}>
             <article>
-              <span>Total coaches</span>
+              <span>Ukupno trenera</span>
               <strong>{coaches.length}</strong>
             </article>
 
             <article>
-              <span>Specialized</span>
+              <span>Specijalizovani</span>
               <strong>{coachesWithSpecializationCount}</strong>
             </article>
 
             <article>
-              <span>Without phone</span>
+              <span>Bez broja telefona</span>
               <strong>{coachesWithoutPhoneCount}</strong>
             </article>
           </div>
@@ -363,13 +363,13 @@ function Coaches() {
             <input
               aria-label="Search coaches"
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search by name, email, phone or specialization..."
+              placeholder="Pretraga po imenu, emailu, telefonu ili precijalizaciji..."
               type="search"
               value={searchTerm}
             />
 
             <span>
-              Showing {filteredCoaches.length} of {coaches.length}
+              Prikazano {filteredCoaches.length} of {coaches.length}
             </span>
           </div>
 
@@ -403,7 +403,7 @@ function Coaches() {
                           onClick={() => startEditingCoach(coach)}
                           type="button"
                         >
-                          Edit
+                          Uredi
                         </button>
 
                         <button
@@ -411,7 +411,7 @@ function Coaches() {
                           onClick={() => handleDeleteCoach(coach)}
                           type="button"
                         >
-                          Delete
+                          Obriši
                         </button>
                       </div>
                     </td>

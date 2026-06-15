@@ -232,7 +232,7 @@ function Files() {
 
         <div>
           <h1>Fajlovi</h1>
-          <p>Dokumenti i fajlovi povezani sa clanovima kluba.</p>
+          <p>Dokumenti i fajlovi povezani sa članovima kluba.</p>
         </div>
 
         <button className={styles.addButton} onClick={openForm} type="button">
@@ -252,19 +252,19 @@ function Files() {
             <form className={styles.uploadForm} onSubmit={handleUploadFile}>
               <div className={styles.formHeader}>
                 <h2>Upload fajla</h2>
-                <p>Dodaj dokument i povezi ga sa clanom kluba.</p>
+                <p>Dodaj dokument i poveži ga sa članom kluba.</p>
               </div>
 
               <div className={styles.formGrid}>
                 <label>
-                  Clan
+                  Član
                   <select
                     name="member_id"
                     onChange={handleFormChange}
                     required
                     value={uploadForm.member_id}
                   >
-                    <option value="">Odaberi clana</option>
+                    <option value="">Odaberi člana</option>
                     {members.map((member) => (
                       <option key={member.id} value={member.id}>
                         {member.first_name} {member.last_name}
@@ -319,7 +319,7 @@ function Files() {
             </article>
 
             <article>
-              <span>Povezano sa clanom</span>
+              <span>Povezano sa članom</span>
               <strong>{filesWithMemberCount}</strong>
             </article>
 
@@ -333,7 +333,7 @@ function Files() {
             <input
               aria-label="Search files"
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Pretraga po nazivu, tipu ili clanu..."
+              placeholder="Pretraga po nazivu, tipu ili članu..."
               type="search"
               value={searchTerm}
             />
@@ -352,7 +352,7 @@ function Files() {
             </select>
 
             <span>
-              Showing {filteredFiles.length} of {files.length}
+              Prikazano {filteredFiles.length} of {files.length}
             </span>
           </div>
 
@@ -374,7 +374,7 @@ function Files() {
                   </div>
 
                   <div className={styles.fileMeta}>
-                    <span>Clan</span>
+                    <span>Član</span>
                     <strong>{getMemberName(file) || "-"}</strong>
                   </div>
 

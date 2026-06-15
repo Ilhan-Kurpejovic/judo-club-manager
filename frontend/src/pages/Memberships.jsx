@@ -56,7 +56,9 @@ function formatPaymentDate(dateValue) {
 }
 
 function getMonthLabel(monthValue) {
-  return months.find((month) => month.value === String(monthValue))?.label || "-";
+  return (
+    months.find((month) => month.value === String(monthValue))?.label || "-"
+  );
 }
 
 function getMemberName(member) {
@@ -148,7 +150,9 @@ function Memberships() {
         }
       } catch (error) {
         if (isActive) {
-          setError(error.response?.data?.message || "Could not load memberships.");
+          setError(
+            error.response?.data?.message || "Could not load memberships.",
+          );
         }
       } finally {
         if (isActive) {
@@ -274,7 +278,9 @@ function Memberships() {
       await loadMonthlyData();
       setPageSuccess("Uplata je evidentirana.");
     } catch (error) {
-      setError(error.response?.data?.message || "Could not mark membership paid.");
+      setError(
+        error.response?.data?.message || "Could not mark membership paid.",
+      );
     } finally {
       setIsSavingId(null);
     }
@@ -323,9 +329,7 @@ function Memberships() {
 
         <div>
           <h1>Clanarine</h1>
-          <p>
-            Mjesecna evidencija uplata po svim aktivnim clanovima kluba.
-          </p>
+          <p>Mjesecna evidencija uplata po svim aktivnim clanovima kluba.</p>
         </div>
       </div>
 
@@ -398,7 +402,7 @@ function Memberships() {
 
           <div className={styles.summaryGrid}>
             <article>
-              <span>Aktivni clanovi</span>
+              <span>Aktivni članovi</span>
               <strong>{monthlyRows.length}</strong>
             </article>
 
@@ -418,7 +422,7 @@ function Memberships() {
             </article>
 
             <article>
-              <span>Uplaceno</span>
+              <span>Uplaćeno</span>
               <strong>{paidTotal.toFixed(2)} EUR</strong>
             </article>
           </div>
@@ -428,10 +432,10 @@ function Memberships() {
               <thead>
                 <tr>
                   <th>Status</th>
-                  <th>Clan</th>
+                  <th>Član</th>
                   <th>Trening grupa</th>
                   <th>Iznos</th>
-                  <th>Datum placanja</th>
+                  <th>Datum plaćanja</th>
                   <th>Akcija</th>
                 </tr>
               </thead>
@@ -460,7 +464,10 @@ function Memberships() {
                           className={styles.amountInput}
                           min="0"
                           onChange={(event) =>
-                            handleAmountDraftChange(row.member.id, event.target.value)
+                            handleAmountDraftChange(
+                              row.member.id,
+                              event.target.value,
+                            )
                           }
                           step="0.01"
                           type="number"
@@ -477,7 +484,7 @@ function Memberships() {
                           onClick={() => markAsUnpaid(row)}
                           type="button"
                         >
-                          Ponisti uplatu
+                          Poništi uplatu
                         </button>
                       ) : (
                         <button
@@ -486,7 +493,7 @@ function Memberships() {
                           onClick={() => markAsPaid(row)}
                           type="button"
                         >
-                          Oznaci placeno
+                          Oznaci plaćeno
                         </button>
                       )}
                     </td>
@@ -496,7 +503,9 @@ function Memberships() {
             </table>
 
             {monthlyRows.length === 0 && (
-              <p className={styles.emptyTable}>No members found for this view.</p>
+              <p className={styles.emptyTable}>
+                No members found for this view.
+              </p>
             )}
           </div>
         </>

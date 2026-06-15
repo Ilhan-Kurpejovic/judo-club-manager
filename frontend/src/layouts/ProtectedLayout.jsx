@@ -73,7 +73,7 @@ function ProtectedLayout() {
           )}
 
           <button type="button" onClick={handleLogout}>
-            Log out
+            Odjavi se
           </button>
         </div>
       </header>

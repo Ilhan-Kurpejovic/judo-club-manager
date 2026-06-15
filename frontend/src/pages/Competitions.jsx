@@ -13,8 +13,8 @@ const initialCompetitionForm = {
 
 const competitionFilters = [
   { label: "Sva", value: "all" },
-  { label: "Buduca", value: "upcoming" },
-  { label: "Prosla", value: "past" },
+  { label: "Buduća", value: "upcoming" },
+  { label: "Prošla", value: "past" },
 ];
 
 const ageCategories = ["poletarac", "pionir", "kadet", "junior", "senior"];
@@ -111,15 +111,18 @@ function Competitions() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCompetitionId, setEditingCompetitionId] = useState(null);
-  const [competitionForm, setCompetitionForm] = useState(initialCompetitionForm);
+  const [competitionForm, setCompetitionForm] = useState(
+    initialCompetitionForm,
+  );
   const [openCategoriesCompetitionId, setOpenCategoriesCompetitionId] =
     useState(null);
   const [openApplicationsCompetitionId, setOpenApplicationsCompetitionId] =
     useState(null);
-  const [categoriesByCompetitionId, setCategoriesByCompetitionId] = useState({});
-  const [applicationsByCompetitionId, setApplicationsByCompetitionId] = useState(
+  const [categoriesByCompetitionId, setCategoriesByCompetitionId] = useState(
     {},
   );
+  const [applicationsByCompetitionId, setApplicationsByCompetitionId] =
+    useState({});
   const [categoryDrafts, setCategoryDrafts] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCategorySaving, setIsCategorySaving] = useState(false);
@@ -135,8 +138,12 @@ function Competitions() {
 
   const sortedCompetitions = useMemo(() => {
     return [...competitions].sort((firstCompetition, secondCompetition) => {
-      const firstDate = normalizeDateForInput(firstCompetition.competition_date);
-      const secondDate = normalizeDateForInput(secondCompetition.competition_date);
+      const firstDate = normalizeDateForInput(
+        firstCompetition.competition_date,
+      );
+      const secondDate = normalizeDateForInput(
+        secondCompetition.competition_date,
+      );
       const firstIsUpcoming = firstDate >= todayDate;
       const secondIsUpcoming = secondDate >= todayDate;
 
@@ -203,7 +210,9 @@ function Competitions() {
         }
       } catch (error) {
         if (isActive) {
-          setError(error.response?.data?.message || "Could not load competitions.");
+          setError(
+            error.response?.data?.message || "Could not load competitions.",
+          );
         }
       } finally {
         if (isActive) {
@@ -448,7 +457,9 @@ function Competitions() {
       handleCategoryDraftChange(competitionId, "");
       setPageSuccess("Category added successfully.");
     } catch (error) {
-      setCategoryError(error.response?.data?.message || "Could not add category.");
+      setCategoryError(
+        error.response?.data?.message || "Could not add category.",
+      );
     } finally {
       setIsCategorySaving(false);
     }
@@ -460,7 +471,9 @@ function Competitions() {
     setPageSuccess("");
 
     try {
-      await axiosInstance.delete(`/competition-allowed-categories/${categoryId}`);
+      await axiosInstance.delete(
+        `/competition-allowed-categories/${categoryId}`,
+      );
 
       await loadCategoriesForCompetition(competitionId);
       setPageSuccess("Category removed successfully.");
@@ -483,10 +496,13 @@ function Competitions() {
     setPageSuccess("");
 
     try {
-      await axiosInstance.put(`/competition-applications/${application.id}/status`, {
-        status,
-        note: application.note || null,
-      });
+      await axiosInstance.put(
+        `/competition-applications/${application.id}/status`,
+        {
+          status,
+          note: application.note || null,
+        },
+      );
 
       updateApplicationInState(competitionId, application.id, { status });
       await loadApplicationsForCompetition(competitionId);
@@ -585,40 +601,48 @@ function Competitions() {
         <span className={styles.accentLine}></span>
 
         <div>
-          <h1>Takmicenja</h1>
-          <p>Pregled turnira, lokacija, organizatora i datuma odrzavanja.</p>
+          <h1>Takmičenja</h1>
+          <p>Pregled turnira, lokacija, organizatora i datuma održavanja.</p>
         </div>
 
-        <button className={styles.addButton} onClick={openCreateForm} type="button">
-          Dodaj takmicenje
+        <button
+          className={styles.addButton}
+          onClick={openCreateForm}
+          type="button"
+        >
+          Dodaj takmičenje
         </button>
       </div>
 
-      {isLoading && <p className={styles.emptyState}>Loading competitions...</p>}
+      {isLoading && (
+        <p className={styles.emptyState}>Loading competitions...</p>
+      )}
 
       {error && !isLoading && <p className={styles.errorState}>{error}</p>}
 
       {!isLoading && !error && (
         <>
           {pageSuccess && <p className={styles.pageSuccess}>{pageSuccess}</p>}
-          {categoryError && <p className={styles.categoryError}>{categoryError}</p>}
+          {categoryError && (
+            <p className={styles.categoryError}>{categoryError}</p>
+          )}
           {applicationError && (
             <p className={styles.applicationError}>{applicationError}</p>
           )}
 
           <div className={styles.summaryGrid}>
             <article>
-              <span>Ukupno takmicenja</span>
+              <span>Ukupno takmičenja</span>
               <strong>{competitions.length}</strong>
             </article>
 
             <article>
-              <span>Buduca</span>
+              <span>Buduća</span>
               <strong>{upcomingCompetitionsCount}</strong>
             </article>
 
             <article>
-              <span>Prosla</span>
+              <span>Prošla</span>
               <strong>{pastCompetitionsCount}</strong>
             </article>
           </div>
@@ -631,8 +655,8 @@ function Competitions() {
               <div className={styles.formHeader}>
                 <h2>
                   {editingCompetitionId
-                    ? "Edit competition"
-                    : "Add competition"}
+                    ? "Uredi takmičenje"
+                    : "Dodaj takmičenje"}
                 </h2>
                 <p>
                   {editingCompetitionId
@@ -643,7 +667,7 @@ function Competitions() {
 
               <div className={styles.formGrid}>
                 <label className={styles.fullWidthField}>
-                  Naziv takmicenja
+                  Naziv takmičenja
                   <input
                     name="name"
                     onChange={handleFormChange}
@@ -688,7 +712,7 @@ function Competitions() {
                 </label>
 
                 <label>
-                  Drzava
+                  Država
                   <input
                     name="country"
                     onChange={handleFormChange}
@@ -714,15 +738,18 @@ function Competitions() {
                   {isSubmitting
                     ? "Saving..."
                     : editingCompetitionId
-                      ? "Save changes"
-                      : "Create competition"}
+                      ? "Sačuvaj izmjene"
+                      : "Kreiraj takmičenje"}
                 </button>
               </div>
             </form>
           )}
 
           <div className={styles.toolbar}>
-            <div className={styles.filterGroup} aria-label="Filter competitions">
+            <div
+              className={styles.filterGroup}
+              aria-label="Filter competitions"
+            >
               {competitionFilters.map((filter) => (
                 <button
                   className={
@@ -742,7 +769,7 @@ function Competitions() {
             <input
               aria-label="Search competitions"
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Pretraga po nazivu, gradu, drzavi ili organizatoru..."
+              placeholder="Pretraga po nazivu, gradu, državi ili organizatoru..."
               type="search"
               value={searchTerm}
             />
@@ -756,11 +783,16 @@ function Competitions() {
               const isUpcomingCompetition = competitionDate >= todayDate;
 
               return (
-                <article className={styles.competitionCard} key={competition.id}>
+                <article
+                  className={styles.competitionCard}
+                  key={competition.id}
+                >
                   <div className={styles.cardDate}>
-                    <span>{formatCompetitionDate(competition.competition_date)}</span>
+                    <span>
+                      {formatCompetitionDate(competition.competition_date)}
+                    </span>
                     <strong>
-                      {isUpcomingCompetition ? "Buduce" : "Proslo"}
+                      {isUpcomingCompetition ? "Buduće" : "Prošlo"}
                     </strong>
                   </div>
 
@@ -768,7 +800,9 @@ function Competitions() {
                     <div className={styles.cardHeader}>
                       <div>
                         <h2>{competition.name}</h2>
-                        <p>{getLocation(competition) || "Lokacija nije unijeta"}</p>
+                        <p>
+                          {getLocation(competition) || "Lokacija nije unijeta"}
+                        </p>
                       </div>
 
                       <span
@@ -778,7 +812,7 @@ function Competitions() {
                             : styles.statusPast
                         }
                       >
-                        {isUpcomingCompetition ? "Predstoji" : "Zavrseno"}
+                        {isUpcomingCompetition ? "Predstoji" : "Završeno"}
                       </span>
                     </div>
 
@@ -809,7 +843,7 @@ function Competitions() {
                         onClick={() => openEditForm(competition)}
                         type="button"
                       >
-                        Edit
+                        Uredi
                       </button>
 
                       <button
@@ -817,7 +851,7 @@ function Competitions() {
                         onClick={() => handleDeleteCompetition(competition)}
                         type="button"
                       >
-                        Delete
+                        Obriši
                       </button>
                     </div>
 
@@ -827,35 +861,35 @@ function Competitions() {
                           <div>
                             <h3>Dozvoljene kategorije</h3>
                             <p>
-                              Clan se moze prijaviti samo ako pripada jednoj od
+                              Član se moze prijaviti samo ako pripada jednoj od
                               ovih kategorija.
                             </p>
                           </div>
                         </div>
 
                         <div className={styles.categoryBadges}>
-                          {(categoriesByCompetitionId[competition.id] || []).map(
-                            (category) => (
-                              <span
-                                className={styles.categoryBadge}
-                                key={category.id}
+                          {(
+                            categoriesByCompetitionId[competition.id] || []
+                          ).map((category) => (
+                            <span
+                              className={styles.categoryBadge}
+                              key={category.id}
+                            >
+                              {category.age_category}
+                              <button
+                                disabled={isCategorySaving}
+                                onClick={() =>
+                                  handleDeleteCategory(
+                                    competition.id,
+                                    category.id,
+                                  )
+                                }
+                                type="button"
                               >
-                                {category.age_category}
-                                <button
-                                  disabled={isCategorySaving}
-                                  onClick={() =>
-                                    handleDeleteCategory(
-                                      competition.id,
-                                      category.id,
-                                    )
-                                  }
-                                  type="button"
-                                >
-                                  x
-                                </button>
-                              </span>
-                            ),
-                          )}
+                                x
+                              </button>
+                            </span>
+                          ))}
 
                           {(categoriesByCompetitionId[competition.id] || [])
                             .length === 0 && (
@@ -1037,7 +1071,7 @@ function Competitions() {
                       ] || []
                     ).length === 0 && (
                       <p className={styles.emptyApplications}>
-                        Nema prijava za ovo takmicenje.
+                        Nema prijava za ovo takmičenje.
                       </p>
                     )}
                   </div>
@@ -1050,7 +1084,7 @@ function Competitions() {
                       }
                       type="button"
                     >
-                      Export CSV
+                      Kreiraj CSV dokument
                     </button>
                   </div>
                 </div>

@@ -57,14 +57,15 @@ function Login() {
         <form className={styles.loginCard} onSubmit={handleSubmit}>
           <div className={styles.loginAccent}></div>
 
-          <h1>Login to the system</h1>
+          <h1>Uloguj se na sistem</h1>
 
           <p className={styles.loginDescription}>
-            Enter your credentials to access the Judo Club Manager application.
+            Usesi svoje podatke kako bi se ulogovao na Judo Club Manager
+            aplikaciju.
           </p>
 
           <div className={styles.loginField}>
-            <label htmlFor="email">Email address</label>
+            <label htmlFor="email">Email adresa</label>
             <input
               id="email"
               type="email"
@@ -78,8 +79,8 @@ function Login() {
 
           <div className={styles.loginField}>
             <div className={styles.loginPasswordRow}>
-              <label htmlFor="password">Password</label>
-              <a href="#">Forgot password?</a>
+              <label htmlFor="password">Lozinka</label>
+              <a href="#">Zaboravio/la sam loziknu?</a>
             </div>
 
             <input
@@ -103,12 +104,12 @@ function Login() {
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? "Logging in..." : "Log in"}
+            {isLoading ? "Prijavljivanje..." : "Prijavi se"}
           </button>
 
           <p className={styles.loginNote}>
-            Authorized access only. Contact your club administrator for an
-            account.
+            Isključivo autorizovan pristup. Kontaktirajte administratora kluba
+            za svoj akaunt.
           </p>
         </form>
       </section>

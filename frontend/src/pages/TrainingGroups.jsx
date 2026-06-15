@@ -220,7 +220,11 @@ function TrainingGroups() {
           <p>Pregled grupa, dodijeljenih trenera i uzrasnih kategorija.</p>
         </div>
 
-        <button className={styles.addButton} onClick={openCreateForm} type="button">
+        <button
+          className={styles.addButton}
+          onClick={openCreateForm}
+          type="button"
+        >
           Dodaj grupu
         </button>
       </div>
@@ -350,7 +354,7 @@ function TrainingGroups() {
             />
 
             <span>
-              Showing {filteredGroups.length} of {trainingGroups.length}
+              Prikazano {filteredGroups.length} of {trainingGroups.length}
             </span>
           </div>
 
@@ -361,7 +365,7 @@ function TrainingGroups() {
                   <th>Naziv grupe</th>
                   <th>Uzrasna kategorija</th>
                   <th>Trener</th>
-                  <th>Broj clanova</th>
+                  <th>Broj članova</th>
                   <th>Opis</th>
                   <th>Akcije</th>
                 </tr>
@@ -384,7 +388,7 @@ function TrainingGroups() {
                           onClick={() => openEditForm(group)}
                           type="button"
                         >
-                          Edit
+                          Uredi
                         </button>
 
                         <button
@@ -392,7 +396,7 @@ function TrainingGroups() {
                           onClick={() => handleDeleteGroup(group)}
                           type="button"
                         >
-                          Delete
+                          Obriši
                         </button>
                       </div>
                     </td>

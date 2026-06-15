@@ -268,27 +268,27 @@ function Members() {
       <div className={styles.pageHeader}>
         <span className={styles.accentLine}></span>
         <div>
-          <h1>Clanovi</h1>
-          <p>Pregled clanova kluba, trening grupa i osnovnih kontakt podataka.</p>
+          <h1>Članovi</h1>
+          <p>
+            Pregled članova kluba, trening grupa i osnovnih kontakt podataka.
+          </p>
         </div>
         <button
           className={styles.addButton}
           onClick={isFormOpen ? closeForm : openCreateForm}
           type="button"
         >
-          {isFormOpen ? "Close form" : "Add member"}
+          {isFormOpen ? "Zatvori formu" : "Dodaj člana"}
         </button>
       </div>
 
-      {isLoading && <p className={styles.emptyState}>Loading members...</p>}
+      {isLoading && <p className={styles.emptyState}>Učitavanje članova...</p>}
 
       {error && !isLoading && <p className={styles.errorState}>{error}</p>}
 
       {!isLoading && !error && (
         <>
-          {pageSuccess && (
-            <p className={styles.pageSuccess}>{pageSuccess}</p>
-          )}
+          {pageSuccess && <p className={styles.pageSuccess}>{pageSuccess}</p>}
 
           {isFormOpen && (
             <form
@@ -296,17 +296,17 @@ function Members() {
               onSubmit={editingMember ? handleUpdateMember : handleCreateMember}
             >
               <div className={styles.formHeader}>
-                <h2>{editingMember ? "Edit member" : "Add member"}</h2>
+                <h2>{editingMember ? "Uredi člana" : "Dodaj člana"}</h2>
                 <p>
                   {editingMember
-                    ? "Update member profile details."
-                    : "Create a member profile and initial login account."}
+                    ? "Ispravi i dodaj informacije o članu."
+                    : "Kreiraj profil članu kao i njegovu prijavu."}
                 </p>
               </div>
 
               <div className={styles.formGrid}>
                 <label>
-                  First name
+                  Ime
                   <input
                     name="first_name"
                     onChange={handleFormChange}
@@ -317,7 +317,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Last name
+                  Prezime
                   <input
                     name="last_name"
                     onChange={handleFormChange}
@@ -330,7 +330,7 @@ function Members() {
                 {!editingMember && (
                   <>
                     <label>
-                      Login email
+                      Email za prijavu
                       <input
                         name="login_email"
                         onChange={handleFormChange}
@@ -341,7 +341,7 @@ function Members() {
                     </label>
 
                     <label>
-                      Initial password
+                      Inicijalna lozinka
                       <input
                         name="initial_password"
                         onChange={handleFormChange}
@@ -354,7 +354,7 @@ function Members() {
                 )}
 
                 <label>
-                  Date of birth
+                  Datum rodjenja
                   <input
                     name="date_of_birth"
                     onChange={handleFormChange}
@@ -364,7 +364,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Gender
+                  Pol
                   <select
                     name="gender"
                     onChange={handleFormChange}
@@ -377,7 +377,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Age category
+                  Uzrasna kategorija
                   <select
                     name="age_category"
                     onChange={handleFormChange}
@@ -393,7 +393,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Belt
+                  Pojas
                   <select
                     name="belt"
                     onChange={handleFormChange}
@@ -411,7 +411,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Weight category
+                  Težinska kategorija
                   <input
                     name="weight_category"
                     onChange={handleFormChange}
@@ -422,7 +422,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Training group
+                  Trening grupa
                   <select
                     name="training_group_id"
                     onChange={handleFormChange}
@@ -438,7 +438,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Contact email
+                  Kontakt email
                   <input
                     name="email"
                     onChange={handleFormChange}
@@ -448,7 +448,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Phone
+                  Broj telefona
                   <input
                     name="phone"
                     onChange={handleFormChange}
@@ -458,7 +458,7 @@ function Members() {
                 </label>
 
                 <label>
-                  Parent phone
+                  Broj telefona roditelja
                   <input
                     name="parent_phone"
                     onChange={handleFormChange}
@@ -468,7 +468,7 @@ function Members() {
                 </label>
 
                 <label className={styles.fullWidthField}>
-                  Address
+                  Adresa
                   <input
                     name="address"
                     onChange={handleFormChange}
@@ -509,8 +509,8 @@ function Members() {
                       ? "Saving..."
                       : "Creating..."
                     : editingMember
-                      ? "Save changes"
-                      : "Create member"}
+                      ? "Sačuvaj izmjene"
+                      : "Kreiraj člana"}
                 </button>
               </div>
             </form>
@@ -518,15 +518,15 @@ function Members() {
 
           <div className={styles.summaryGrid}>
             <article>
-              <span>Total members</span>
+              <span>Ukupno članova</span>
               <strong>{members.length}</strong>
             </article>
             <article>
-              <span>Active members</span>
+              <span>Aktivni članovi</span>
               <strong>{activeMembersCount}</strong>
             </article>
             <article>
-              <span>Without group</span>
+              <span>Bez dodijeljene trening grupe</span>
               <strong>{membersWithoutGroupCount}</strong>
             </article>
           </div>
@@ -535,13 +535,13 @@ function Members() {
             <input
               aria-label="Search members"
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search by name, email, group or belt..."
+              placeholder="Pretraga po imenu, emailu, kategorijama..."
               type="search"
               value={searchTerm}
             />
 
             <span>
-              Showing {filteredMembers.length} of {members.length}
+              Prikazano {filteredMembers.length} of {members.length}
             </span>
           </div>
 
@@ -588,14 +588,14 @@ function Members() {
                         onClick={() => openEditForm(member)}
                         type="button"
                       >
-                        Edit
+                        Uredi
                       </button>
                       <button
                         className={styles.deleteButton}
                         onClick={() => handleDeleteMember(member)}
                         type="button"
                       >
-                        Delete
+                        Obriši
                       </button>
                     </td>
                   </tr>
