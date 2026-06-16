@@ -57,7 +57,7 @@ function Login() {
         <form className={styles.loginCard} onSubmit={handleSubmit}>
           <div className={styles.loginAccent}></div>
 
-          <h1>Uloguj se na sistem</h1>
+          <h1>Prijavi se na sistem</h1>
 
           <p className={styles.loginDescription}>
             Usesi svoje podatke kako bi se ulogovao na Judo Club Manager

@@ -370,7 +370,7 @@ function Members() {
                     onChange={handleFormChange}
                     value={memberForm.gender}
                   >
-                    <option value="">Select gender</option>
+                    <option value="">Odaberi pol</option>
                     <option value="muski">muski</option>
                     <option value="zenski">zenski</option>
                   </select>
@@ -383,7 +383,7 @@ function Members() {
                     onChange={handleFormChange}
                     value={memberForm.age_category}
                   >
-                    <option value="">Select age category</option>
+                    <option value="">Odaberi uzrasnu kategoriju</option>
                     <option value="poletarac">poletarac</option>
                     <option value="pionir">pionir</option>
                     <option value="kadet">kadet</option>
@@ -399,10 +399,10 @@ function Members() {
                     onChange={handleFormChange}
                     value={memberForm.belt}
                   >
-                    <option value="">Select belt</option>
+                    <option value="">Odaberi pojas</option>
                     <option value="bijeli">bijeli</option>
-                    <option value="zuti">zuti</option>
-                    <option value="narandzasti">narandzasti</option>
+                    <option value="zuti">žuti</option>
+                    <option value="narandzasti">narandžasti</option>
                     <option value="zeleni">zeleni</option>
                     <option value="plavi">plavi</option>
                     <option value="braon">braon</option>
