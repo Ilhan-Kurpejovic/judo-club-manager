@@ -240,7 +240,7 @@ function TrainingGroups() {
           {isFormOpen && (
             <form className={styles.groupForm} onSubmit={handleSubmitGroup}>
               <div className={styles.formHeader}>
-                <h2>{editingGroupId ? "Edit group" : "Add group"}</h2>
+                <h2>{editingGroupId ? "Uredi grupu" : "Dodaj grupu"}</h2>
                 <p>
                   {editingGroupId
                     ? "Update training group details."

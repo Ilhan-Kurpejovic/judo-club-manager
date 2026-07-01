@@ -506,7 +506,7 @@ function Competitions() {
 
       updateApplicationInState(competitionId, application.id, { status });
       await loadApplicationsForCompetition(competitionId);
-      setPageSuccess("Application status updated successfully.");
+      setPageSuccess("Status aplikacije izmijenjen uspiješno.");
     } catch (error) {
       setApplicationError(
         error.response?.data?.message || "Could not update application status.",

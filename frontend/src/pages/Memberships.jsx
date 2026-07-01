@@ -251,7 +251,7 @@ function Memberships() {
     const amount = getDraftAmount(row);
 
     if (!amount || Number(amount) <= 0) {
-      setError("Iznos clanarine mora biti veci od 0.");
+      setError("Iznos članarine mora biti veci od 0.");
       return;
     }
 
@@ -328,7 +328,7 @@ function Memberships() {
         <span className={styles.accentLine}></span>
 
         <div>
-          <h1>Clanarine</h1>
+          <h1>Članarine</h1>
           <p>Mjesecna evidencija uplata po svim aktivnim clanovima kluba.</p>
         </div>
       </div>
@@ -385,7 +385,7 @@ function Memberships() {
                 Pretraga
                 <input
                   onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Ime clana..."
+                  placeholder="Ime člana..."
                   type="search"
                   value={searchTerm}
                 />
